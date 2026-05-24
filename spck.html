@@ -57,6 +57,21 @@
 
     <div id="loading-overlay"><i class="fas fa-spinner fa-spin"></i> Đang xử lý...</div>
 
+    <!-- === MODAL THÊM THÀNH PHỐ === -->
+    <div id="add-city-modal" class="modal-overlay">
+        <div class="modal-content" id="add-city-modal-content">
+            <div class="modal-header">
+                <h3>🌍 Thêm Thành Phố</h3>
+                <button class="modal-close" id="modal-close-btn">&times;</button>
+            </div>
+            <input type="text" id="modal-city-input" placeholder="Ví dụ: Hà Nội, Hồ Chí Minh, Đà Nẵng..." class="modal-input">
+            <div class="modal-actions">
+                <button id="modal-cancel-btn" class="btn-modal-cancel">Hủy</button>
+                <button id="modal-submit-btn" class="btn-modal-submit">Thêm</button>
+            </div>
+        </div>
+    </div>
+
     <!-- === LOGOUT CONFIRMATION POPUP === -->
     <div id="logout-overlay">
         <div id="logout-popup">

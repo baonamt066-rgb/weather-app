@@ -3,6 +3,66 @@
 // ============================================================================
 
 /**
+ * HÀM 0: Quản lý Modal thêm thành phố (Helper functions)
+ */
+function showAddCityModal() {
+    const modal = document.getElementById('add-city-modal');
+    const input = document.getElementById('modal-city-input');
+    modal.style.display = 'flex';
+    input.focus();
+    input.value = '';
+}
+
+function hideAddCityModal() {
+    const modal = document.getElementById('add-city-modal');
+    modal.style.display = 'none';
+}
+
+function showModalAlert(msg, type = 'info') {
+    // Hiển thị cảnh báo bằng cách focus vào input và thêm border color
+    const input = document.getElementById('modal-city-input');
+    const colors = {
+        success: '#4CAF50',
+        error: '#f44336',
+        warning: '#ff9800'
+    };
+    
+    input.style.borderColor = colors[type] || colors.info;
+    
+    // Nếu là lỗi, delay 2 giây rồi reset
+    if (type !== 'success') {
+        setTimeout(() => {
+            input.style.borderColor = '#ddd';
+        }, 2000);
+    }
+    
+    // Hiển thị alert bằng console hoặc tooltip
+    console.log(`[${type.toUpperCase()}] ${msg}`);
+    
+    // Tạo thông báo dạng tooltip nhỏ trên input
+    const tooltip = document.createElement('div');
+    tooltip.textContent = msg;
+    tooltip.style.cssText = `
+        position: absolute;
+        top: -35px;
+        left: 15px;
+        background: ${colors[type] || '#2196F3'};
+        color: white;
+        padding: 8px 12px;
+        border-radius: 6px;
+        font-size: 12px;
+        z-index: 10000;
+        animation: slideUp 0.3s ease-out;
+    `;
+    
+    const inputParent = input.parentElement;
+    inputParent.style.position = 'relative';
+    inputParent.appendChild(tooltip);
+    
+    setTimeout(() => tooltip.remove(), 3000);
+}
+
+/**
  * HÀM 1: Vẽ (Render) danh sách các thành phố quan tâm lên thanh Sidebar
  * Hàm này duyệt qua mảng `savedCities`, gọi API lấy thời tiết thời gian thực của từng nơi,
  * dựng cấu trúc thẻ HTML mini và chèn động vào vùng chứa `#side-cities-list`.
@@ -75,57 +135,92 @@ async function renderSavedCities() {
 
 /**
  * HÀM 2: Xử lý thêm một thành phố mới vào danh sách quan tâm
- * Hàm này hiển thị hộp thoại nhập liệu, kiểm tra xem thành phố đó có tồn tại thật trên API không,
+ * Hàm này hiển thị modal nhập liệu, kiểm tra xem thành phố đó có tồn tại thật trên API không,
  * nếu hợp lệ thì thêm vào mảng, lưu lại vào LocalStorage của tài khoản và vẽ lại Sidebar.
  */
 async function addNewCity() {
-    // Hiển thị hộp thoại Prompt nguyên bản của trình duyệt để yêu cầu người dùng gõ tên thành phố
-    const newCity = prompt("Nhập tên thành phố/tỉnh bạn muốn thêm (VD: Hai Phong, Can Tho):");
+    showAddCityModal();
+}
+
+async function submitNewCity() {
+    const input = document.getElementById('modal-city-input');
+    const newCity = input.value.trim();
     
-    // Kiểm tra đầu vào: Người dùng có nhập chữ và chuỗi nhập không phải là khoảng trắng vô nghĩa
-    if (newCity && newCity.trim() !== '') {
-        // Mở màn hình phủ chờ (Loading Overlay) để người dùng không bấm loạn khi hệ thống đang xử lý kiểm tra mạng
-        loadingOverlay.style.display = 'flex';
+    if (!newCity) {
+        showModalAlert("Vui lòng nhập tên thành phố!", 'warning');
+        return;
+    }
+    
+    // Mở màn hình phủ chờ (Loading Overlay) để người dùng không bấm loạn khi hệ thống đang xử lý kiểm tra mạng
+    loadingOverlay.style.display = 'flex';
+    hideAddCityModal();
+    
+    try {
+        // Gửi một yêu cầu thử nghiệm (Test Request) tới OpenWeather để xác minh xem tên thành phố này có tồn tại thật hay không
+        const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${newCity}&appid=${openWeatherKey}&units=metric&lang=${currentLang}`);
+        const data = await res.json();
         
-        try {
-            // Gửi một yêu cầu thử nghiệm (Test Request) tới OpenWeather để xác minh xem tên thành phố này có tồn tại thật hay không
-            const res = await fetch(`https://api.openweathermap.org/data/2.5/weather?q=${newCity.trim()}&appid=${openWeatherKey}&units=metric&lang=${currentLang}`);
-            const data = await res.json();
-            
-            // TÌNH HUỐNG 1: API trả về mã trạng thái 200 (Thành phố tồn tại hợp lệ)
-            if (data.cod === 200) {
-                // Sử dụng hàm `.includes()` để kiểm tra xem tên chuẩn hóa (data.name) đã có trong danh sách quan tâm trước đó chưa
-                if (!savedCities.includes(data.name)) {
-                    
-                    // Nếu chưa có, đẩy (push) tên chuẩn hóa từ API vào mảng quản lý `savedCities`
-                    savedCities.push(data.name);
-                    
-                    // ĐỒNG BỘ VÀO BỘ NHỚ LOCALSTORAGE:
-                    try { 
-                        // getSavedCitiesKey() đảm bảo dữ liệu lưu đúng kho lưu trữ của tài khoản đang đăng nhập hiện tại
-                        // Chuyển đổi mảng sang dạng chuỗi JSON bằng JSON.stringify trước khi ghi dữ liệu xuống
-                        localStorage.setItem(getSavedCitiesKey(), JSON.stringify(savedCities)); 
-                    } catch (e) { 
-                        console.error('Failed to persist savedCities', e); 
-                    }
-                    
-                    // Gọi hàm renderSavedCities() ở trên bằng từ khóa 'await' để vẽ lại toàn bộ danh sách sidebar cập nhật mới nhất
-                    await renderSavedCities();
-                    
-                } else {
-                    // Nếu `.includes()` trả về true, báo lỗi cho người dùng biết thành phố này đã được lưu từ trước
-                    alert("Thành phố này đã có trong danh sách!");
+        // TÌNH HUỐNG 1: API trả về mã trạng thái 200 (Thành phố tồn tại hợp lệ)
+        if (data.cod === 200) {
+            // Sử dụng hàm `.includes()` để kiểm tra xem tên chuẩn hóa (data.name) đã có trong danh sách quan tâm trước đó chưa
+            if (!savedCities.includes(data.name)) {
+                
+                // Nếu chưa có, đẩy (push) tên chuẩn hóa từ API vào mảng quản lý `savedCities`
+                savedCities.push(data.name);
+                
+                // ĐỒNG BỘ VÀO BỘ NHỚ LOCALSTORAGE:
+                try { 
+                    // getSavedCitiesKey() đảm bảo dữ liệu lưu đúng kho lưu trữ của tài khoản đang đăng nhập hiện tại
+                    // Chuyển đổi mảng sang dạng chuỗi JSON bằng JSON.stringify trước khi ghi dữ liệu xuống
+                    localStorage.setItem(getSavedCitiesKey(), JSON.stringify(savedCities)); 
+                } catch (e) { 
+                    console.error('Failed to persist savedCities', e); 
                 }
+                
+                // Gọi hàm renderSavedCities() ở trên bằng từ khóa 'await' để vẽ lại toàn bộ danh sách sidebar cập nhật mới nhất
+                await renderSavedCities();
+                showModalAlert("✅ Thêm thành phố thành công!", 'success');
+                
             } else {
-                // TÌNH HUỐNG 2: API trả về mã khác 200 (Ví dụ: 404 - Nhập sai chính tả hoặc thành phố không tồn tại trong DB OpenWeather)
-                alert("Không tìm thấy thành phố này. Vui lòng nhập lại chính xác!");
+                // Nếu `.includes()` trả về true, báo lỗi cho người dùng biết thành phố này đã được lưu từ trước
+                showAddCityModal();
+                showModalAlert("⚠️ Thành phố này đã có trong danh sách!", 'warning');
             }
-        } catch (e) {
-            // Bắt các lỗi vật lý như mất kết nối Internet, đứt cáp mạng trong quá trình fetch dữ liệu
-            alert("Có lỗi xảy ra khi kiểm tra thành phố.");
-        } finally {
-            // Khối LUÔN LUÔN CHẠY: Ẩn màn hình phủ chờ (Loading Overlay) đi để giải phóng giao diện cho người dùng
-            loadingOverlay.style.display = 'none';
+        } else {
+            // TÌNH HUỐNG 2: API trả về mã khác 200 (Ví dụ: 404 - Nhập sai chính tả hoặc thành phố không tồn tại trong DB OpenWeather)
+            showAddCityModal();
+            showModalAlert("❌ Không tìm thấy thành phố này. Vui lòng nhập lại!", 'error');
         }
+    } catch (e) {
+        // Bắt các lỗi vật lý như mất kết nối Internet, đứt cáp mạng trong quá trình fetch dữ liệu
+        showAddCityModal();
+        showModalAlert("❌ Có lỗi xảy ra khi kiểm tra thành phố.", 'error');
+    } finally {
+        // Khối LUÔN LUÔN CHẠY: Ẩn màn hình phủ chờ (Loading Overlay) đi để giải phóng giao diện cho người dùng
+        loadingOverlay.style.display = 'none';
     }
 }
+
+// ============================================================================
+// ========== EVENT LISTENERS CHO MODAL THÊM THÀNH PHỐ ==========
+// ============================================================================
+
+// Nút Thêm
+document.getElementById('modal-submit-btn').addEventListener('click', submitNewCity);
+
+// Nút Hủy
+document.getElementById('modal-cancel-btn').addEventListener('click', hideAddCityModal);
+
+// Nút X đóng modal
+document.getElementById('modal-close-btn').addEventListener('click', hideAddCityModal);
+
+// Nút Escape đóng modal
+document.getElementById('modal-city-input').addEventListener('keydown', (e) => {
+    if (e.key === 'Escape') hideAddCityModal();
+    if (e.key === 'Enter') submitNewCity();
+});
+
+// Click ngoài modal để đóng
+document.getElementById('add-city-modal').addEventListener('click', (e) => {
+    if (e.target.id === 'add-city-modal') hideAddCityModal();
+});
