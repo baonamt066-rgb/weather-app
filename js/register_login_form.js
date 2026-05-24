@@ -4,13 +4,13 @@ import { GoogleAuthProvider, getAuth, signInWithPopup } from "https://www.gstati
 // ==========================================
 // 1. CẤU HÌNH & KHỞI TẠO FIREBASE
 // ==========================================
-const firebaseConfig = {
-  apiKey: "AIzaSyBwl0B5hUkCLADnbmdAUrWR0KS1gJ-Ke3s",
-  authDomain: "logingg-jsi40.firebaseapp.com",
-  projectId: "logingg-jsi40",
-  storageBucket: "logingg-jsi40.appspot.com",
-  messagingSenderId: "911500098198",
-  appId: "1:911500098198:web:a6d2316a6392c36f07e0b7"
+const firebaseConfig = { 
+  apiKey : "AIzaSyAgT_0JfVbiLwp6J5csmFiHmUlC4EZdboY" , 
+  authDomain : "jsi47-login-gg-370f0.firebaseapp.com" , 
+  projectId : "jsi47-login-gg-370f0" , 
+  storageBucket : "jsi47-login-gg-370f0.firebasestorage.app" , 
+  messagingSenderId : "992617082148" , 
+  appId : "1:992617082148:web:b67e9adfcd5a7884ea17b1" 
 };
 
 const app = initializeApp(firebaseConfig);
