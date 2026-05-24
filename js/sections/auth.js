@@ -123,5 +123,5 @@ logoutOverlay.addEventListener('click', (e) => {
  */
 document.getElementById('popup-logout-btn').addEventListener('click', () => {
     // Điều hướng trình duyệt chuyển trang lập tức, quay trở về file màn hình form Đăng ký / Đăng nhập
-    window.location.href = 'register_login_form.html';
+    window.location.href = 'index.html';
 });
