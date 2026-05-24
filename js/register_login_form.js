@@ -8,13 +8,13 @@ const firebaseConfig = {
   apiKey: "AIzaSyBwl0B5hUkCLADnbmdAUrWR0KS1gJ-Ke3s",
   authDomain: "logingg-jsi40.firebaseapp.com",
   projectId: "logingg-jsi40",
-  storageBucket: "logingg-jsi40.firebasestorage.app",
+  storageBucket: "logingg-jsi40.appspot.com",
   messagingSenderId: "911500098198",
   appId: "1:911500098198:web:a6d2316a6392c36f07e0b7"
 };
 
 const app = initializeApp(firebaseConfig);
-const auth = getAuth();
+const auth = getAuth(app);
 auth.languageCode = 'vi';
 const provider = new GoogleAuthProvider();
 
@@ -282,14 +282,27 @@ for (let btn of googleButtons) {
         setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
       })
       .catch((error) => {
+        console.log("FULL ERROR:", error);
+
         const errorCode = error.code;
-        console.error(errorCode, error.message);
+        const errorMessage = error.message;
+
+        console.error("Error Code:", errorCode);
+        console.error("Error Message:", errorMessage);
+
         if (errorCode === 'auth/popup-closed-by-user') {
           showToast('Đăng nhập bị huỷ!', 'info');
+        } else if (errorCode === 'auth/popup-blocked') {
+          showToast('Chrome đang chặn popup!', 'error');
+        } else if (errorCode === 'auth/unauthorized-domain') {
+          showToast('Domain chưa được thêm vào Firebase!', 'error');
+        } else if (errorCode === 'auth/network-request-failed') {
+          showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
         } else {
-          showToast('Đăng nhập Google thất bại!', 'error');
-          triggerRain();
+          showToast(errorMessage, 'error');
         }
+
+        triggerRain();
       });
   });
 }
