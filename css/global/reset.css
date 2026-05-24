@@ -1,0 +1,44 @@
+/* === RESET & CƠ BẢN === */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+    font-family: 'Outfit', sans-serif;
+}
+
+:root {
+    --sky-top: #0d4f80;
+    --sky-mid: #1a6fa8;
+    --sky-bot: #5bbce4;
+    --accent: #ffd166;
+    --panel-bg: rgba(255, 255, 255, 0.10);
+    --panel-border: rgba(255, 255, 255, 0.22);
+    --text-main: #ffffff;
+    --text-muted: rgba(255, 255, 255, 0.65);
+    --card-bg: rgba(255, 255, 255, 0.08);
+    --card-border: rgba(255, 255, 255, 0.18);
+    --input-bg: rgba(255, 255, 255, 0.13);
+    --input-border: rgba(255, 255, 255, 0.30);
+}
+
+body {
+    background: linear-gradient(180deg, #0d4f80 0%, #1a6fa8 40%, #5bbce4 100%);
+    color: #ffffff;
+    height: 100vh;
+    display: flex;
+    overflow: hidden;
+    position: relative;
+}
+
+::-webkit-scrollbar {
+    width: 6px;
+}
+
+::-webkit-scrollbar-track {
+    background: rgba(255, 255, 255, 0.08);
+}
+
+::-webkit-scrollbar-thumb {
+    background: rgba(255, 255, 255, 0.30);
+    border-radius: 10px;
+}

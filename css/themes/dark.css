@@ -1,0 +1,139 @@
+/* ══════════════════════════════════════════
+   NIGHT MODE  (body.night-mode)
+   Giống hệt khi chuyển sang đăng ký trong weather_auth
+══════════════════════════════════════════ */
+body.night-mode .sky-bg {
+    background: linear-gradient(180deg, #050d1a 0%, #0c1e3a 50%, #1a3a5e 100%);
+}
+
+body.night-mode .sky-sun {
+    opacity: 0;
+    transform: translateY(-200px);
+}
+
+body.night-mode .sky-moon {
+    opacity: 1;
+    transform: translateY(0);
+}
+
+body.night-mode .sky-stars {
+    opacity: 1;
+}
+
+body.night-mode .sky-cloud {
+    opacity: 0.10;
+    /* mây mờ đi ban đêm */
+}
+
+/* Sidebar tối lại giống weather_auth night panel */
+body.night-mode .sidebar {
+    background: linear-gradient(180deg, #050d1a 0%, #0c1e3a 100%) !important;
+    border-right-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Body background tối lại */
+body.night-mode {
+    background: linear-gradient(180deg, #050d1a 0%, #0c1e3a 50%, #1a3a5e 100%) !important;
+}
+
+/* Cards sẫm hơn một chút để tương phản với nền đêm */
+body.night-mode .glass-card {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(255, 255, 255, 0.14) !important;
+}
+
+body.night-mode .forecast-item {
+    background: rgba(255, 255, 255, 0.05) !important;
+    border-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+body.night-mode .mini-city-card {
+    background: rgba(255, 255, 255, 0.07) !important;
+    border-color: rgba(255, 255, 255, 0.13) !important;
+}
+
+body.night-mode .search-box {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.18) !important;
+}
+
+body.night-mode .settings-section {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.night-mode .sm-row-section {
+    background: rgba(255, 255, 255, 0.06) !important;
+    border-color: rgba(255, 255, 255, 0.12) !important;
+}
+
+body.night-mode .sunmoon-panel {
+    background: linear-gradient(160deg, #050d1a 0%, #0c1e3a 50%, #1a3a5e 100%) !important;
+}
+
+body.night-mode .settings-panel {
+    background: rgba(5, 13, 26, 0.50) !important;
+}
+
+body.night-mode #logout-overlay {
+    background: rgba(5, 13, 26, 0.50) !important;
+}
+
+body.night-mode #logout-popup {
+    background: rgba(26, 58, 94, 0.95) !important;
+    border-color: rgba(255, 255, 255, 0.25) !important;
+    color: #fff !important;
+}
+
+body.night-mode #logout-popup .popup-header h3 {
+    color: #fff !important;
+}
+
+body.night-mode #logout-popup .popup-body {
+    color: rgba(255, 255, 255, 0.85) !important;
+}
+
+body.night-mode #logout-popup .popup-close {
+    color: rgba(255, 255, 255, 0.65) !important;
+}
+
+body.night-mode #logout-popup .popup-close:hover {
+    background: rgba(255, 255, 255, 0.15) !important;
+    color: #fff !important;
+}
+
+body.night-mode #logout-popup .popup-header {
+    border-bottom-color: rgba(255, 255, 255, 0.20) !important;
+}
+
+body.night-mode #logout-popup .btn-cancel {
+    background: rgba(255, 255, 255, 0.08) !important;
+    border-color: rgba(255, 255, 255, 0.30) !important;
+    color: #fff !important;
+}
+
+body.night-mode #logout-popup .btn-cancel:hover {
+    background: rgba(255, 255, 255, 0.18) !important;
+    border-color: rgba(255, 255, 255, 0.50) !important;
+}
+
+body.night-mode #logout-popup .btn-logout {
+    background: #ffd166 !important;
+    color: #0d3a5c !important;
+}
+
+body.night-mode #logout-popup .btn-logout:hover {
+    background: #ffe699 !important;
+}
+
+body.night-mode .bottom-nav {
+    background: linear-gradient(180deg, #050d1a, #0c1e3a) !important;
+    border-top-color: rgba(255, 255, 255, 0.10) !important;
+}
+
+/* Loading overlay ban đêm: nền tối thay vì xanh ban ngày */
+body.night-mode #loading-overlay {
+    background: rgba(5, 13, 26, 0.90) !important;
+}
+
+/* Accent đêm: trăng vàng nhạt → giữ #ffd166, không đổi */

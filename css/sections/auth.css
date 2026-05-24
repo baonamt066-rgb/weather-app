@@ -1,0 +1,112 @@
+/* === LOGOUT POPUP === */
+#logout-overlay {
+    display: none;
+    position: fixed;
+    inset: 0;
+    background: rgba(13, 79, 128, 0.35);
+    backdrop-filter: blur(6px);
+    -webkit-backdrop-filter: blur(6px);
+    z-index: 9999;
+    justify-content: center;
+    align-items: center;
+}
+
+#logout-overlay.show {
+    display: flex;
+}
+
+#logout-popup {
+    background: rgba(255, 255, 255, 0.95);
+    backdrop-filter: blur(24px);
+    -webkit-backdrop-filter: blur(24px);
+    border: 1px solid rgba(255, 255, 255, 0.50);
+    border-radius: 24px;
+    padding: 32px 28px 24px;
+    width: 360px;
+    box-shadow: 0 24px 64px rgba(0, 0, 0, 0.40);
+    position: relative;
+    animation: popupIn 0.22s ease;
+    color: #0d3a5c;
+}
+
+#logout-popup .popup-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding-bottom: 14px;
+    border-bottom: 1px solid rgba(13, 58, 92, 0.20);
+    margin-bottom: 20px;
+}
+
+#logout-popup .popup-header h3 {
+    font-size: 18px;
+    font-weight: 700;
+    color: #0d3a5c;
+    font-family: 'Space Grotesk', sans-serif;
+}
+
+#logout-popup .popup-close {
+    background: none;
+    border: none;
+    font-size: 20px;
+    color: #64748b;
+    cursor: pointer;
+    line-height: 1;
+    padding: 2px 6px;
+    border-radius: 6px;
+    transition: background 0.2s, color 0.2s;
+}
+
+#logout-popup .popup-close:hover {
+    background: rgba(13, 58, 92, 0.10);
+    color: #0d3a5c;
+}
+
+#logout-popup .popup-body {
+    font-size: 15px;
+    color: #475569;
+    margin-bottom: 28px;
+    line-height: 1.5;
+}
+
+#logout-popup .popup-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 12px;
+}
+
+#logout-popup .btn-cancel {
+    padding: 10px 22px;
+    border: 1px solid #cbd5e1;
+    border-radius: 10px;
+    background: #fff;
+    color: #475569;
+    font-size: 15px;
+    font-weight: 500;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: background 0.2s, border-color 0.2s;
+}
+
+#logout-popup .btn-cancel:hover {
+    background: #f8fafc;
+    border-color: #94a3b8;
+}
+
+#logout-popup .btn-logout {
+    padding: 10px 22px;
+    border: none;
+    border-radius: 10px;
+    background: #1a6fa8;
+    color: #fff;
+    font-size: 15px;
+    font-weight: 700;
+    cursor: pointer;
+    font-family: 'Outfit', sans-serif;
+    transition: background 0.2s, transform 0.15s;
+}
+
+#logout-popup .btn-logout:hover {
+    background: #0d4f80;
+    transform: translateY(-1px);
+}

@@ -1,0 +1,72 @@
+/* === WRAPPER bao 2 màn hình === */
+.content-wrapper {
+    flex: 1;
+    position: relative;
+    overflow: hidden;
+    display: flex;
+    flex-direction: column;
+}
+
+/* === DASHBOARD VIEW === */
+.main-container {
+    position: absolute;
+    inset: 0;
+    padding: 20px 40px;
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+    overflow-y: auto;
+    transition: opacity 0.35s ease, transform 0.35s ease;
+}
+
+.main-container.hidden {
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(-30px);
+}
+
+/* === MAP PANEL VIEW === */
+.map-panel {
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(135deg, #0f2027 0%, #203a43 50%, #2c5364 100%);
+    opacity: 0;
+    pointer-events: none;
+    transform: translateX(30px);
+    transition: opacity 0.35s ease, transform 0.35s ease;
+    overflow: hidden;
+}
+
+.map-panel.active {
+    opacity: 1;
+    pointer-events: all;
+    transform: translateX(0);
+}
+
+/* === MAP PANEL - Map full size === */
+#country-map {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    z-index: 1;
+    background: transparent;
+}
+
+/* === LƯỚI DASHBOARD === */
+.dashboard-grid {
+    display: grid;
+    grid-template-columns: 320px 350px 1fr;
+    grid-template-rows: auto 1fr;
+    gap: 20px;
+    flex: 1;
+}
+
+/* ── Đảm bảo sidebar và content-wrapper nằm trên layer trời ── */
+.sidebar,
+.content-wrapper,
+.bottom-nav {
+    position: relative;
+    z-index: 10;
+}

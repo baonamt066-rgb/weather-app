@@ -1,0 +1,338 @@
+/* ── Light theme overrides ── */
+body[data-theme="light"] {
+    --bg-body: #b8e4f9;
+    --bg-sidebar: rgba(13, 79, 128, 0.85);
+    --border-sidebar: rgba(255, 255, 255, 0.30);
+    --icon-muted: rgba(255, 255, 255, 0.65);
+    --icon-active: #ffffff;
+    --bg-card: rgba(255, 255, 255, 0.55);
+    --border-card: rgba(255, 255, 255, 0.70);
+    --bg-input: rgba(255, 255, 255, 0.45);
+    --border-input: rgba(255, 255, 255, 0.60);
+    --text-primary: #0d3a5c;
+    --text-secondary: #1a5278;
+    --text-muted: #2e7aac;
+    --text-placeholder: #4a90c0;
+    --bg-forecast-item: rgba(255, 255, 255, 0.50);
+    --bg-tab-active: rgba(13, 79, 128, 0.18);
+    --bg-overview-tabs: #2e7aac;
+    --bg-mini-city: rgba(255, 255, 255, 0.55);
+    --border-mini-city: rgba(255, 255, 255, 0.65);
+    --bg-add-city: rgba(255, 255, 255, 0.30);
+    --border-add-city: rgba(13, 79, 128, 0.40);
+    --bg-overlay: rgba(255, 255, 255, 0.88);
+    --bg-sm-panel: linear-gradient(160deg, rgba(184, 228, 249, 0.90) 0%, rgba(224, 244, 252, 0.85) 50%, rgba(240, 249, 255, 0.80) 100%);
+    --bg-sm-row: rgba(255, 255, 255, 0.55);
+    --border-sm-row: rgba(255, 255, 255, 0.70);
+    --sm-time-color: #0d3a5c;
+    --sm-temp-color: #0d3a5c;
+    --sm-desc-color: #2e7aac;
+    --sm-dot-bg: #b8e4f9;
+    --sm-offset-bg: rgba(255, 255, 255, 0.40);
+    --sm-offset-border: rgba(13, 79, 128, 0.25);
+    --sm-label-color: #2e7aac;
+    --sm-offset-input: rgba(255, 255, 255, 0.55);
+    --sm-city-label: #0d3a5c;
+    --sm-info-color: #2e7aac;
+    --bg-settings: transparent;
+    --bg-settings-card: rgba(255, 255, 255, 0.55);
+    --border-settings: rgba(255, 255, 255, 0.65);
+    --settings-title: #0d3a5c;
+    --settings-name: #0d3a5c;
+    --settings-email: #2e7aac;
+    --settings-row-title: #0d3a5c;
+    --settings-row-desc: #2e7aac;
+    --settings-row-border: rgba(13, 79, 128, 0.18);
+    --select-bg: rgba(255, 255, 255, 0.50);
+    --select-border: rgba(13, 79, 128, 0.30);
+    --select-color: #0d3a5c;
+    --select-option-bg: #e0f4fc;
+    --map-panel-bg: linear-gradient(135deg, #b8e4f9 0%, #c8ecf8 50%, #d8f2f9 100%);
+    --scrollbar-track: rgba(13, 79, 128, 0.08);
+    --scrollbar-thumb: rgba(13, 79, 128, 0.25);
+    --sm-scrollbar-thumb: rgba(13, 79, 128, 0.22);
+    --notification-bg: rgba(255, 255, 255, 0.40);
+    --notification-color: #0d3a5c;
+    --search-icon-color: #2e7aac;
+}
+
+/* ── Apply variables to elements ── */
+body {
+    background: linear-gradient(180deg, #0d4f80 0%, #1a6fa8 40%, #5bbce4 100%) !important;
+    color: var(--text-primary) !important;
+    transition: background 1.2s ease, color 0.35s ease;
+}
+
+/* body.night-mode overrides background via .sky-bg layer — no need for bg here */
+
+::-webkit-scrollbar-track {
+    background: var(--scrollbar-track) !important;
+}
+
+::-webkit-scrollbar-thumb {
+    background: var(--scrollbar-thumb) !important;
+}
+
+.sidebar {
+    background: var(--bg-sidebar) !important;
+    border-right-color: var(--border-sidebar) !important;
+    transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+.sidebar .nav-item {
+    color: var(--icon-muted) !important;
+}
+
+.sidebar .nav-item.active,
+.sidebar .nav-item:hover {
+    color: var(--icon-active) !important;
+    background: rgba(255, 255, 255, 0.15) !important;
+}
+
+.sidebar .logout {
+    color: var(--icon-muted) !important;
+}
+
+.sidebar .logout:hover {
+    color: var(--icon-active) !important;
+    background: rgba(255, 255, 255, 0.12) !important;
+}
+
+.glass-card {
+    background: var(--bg-card) !important;
+    border-color: var(--border-card) !important;
+    transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+.search-box {
+    background: var(--bg-input) !important;
+    transition: background 0.35s ease;
+}
+
+.search-box i {
+    color: var(--search-icon-color) !important;
+}
+
+.search-box input {
+    color: var(--text-primary) !important;
+}
+
+.search-box input::placeholder {
+    color: var(--text-placeholder) !important;
+}
+
+.notification {
+    background: var(--notification-bg) !important;
+    color: var(--notification-color) !important;
+    transition: background 0.35s ease;
+}
+
+.forecast-item {
+    background: var(--bg-forecast-item) !important;
+    transition: background 0.35s ease;
+}
+
+.forecast-item .desc {
+    color: var(--text-muted) !important;
+}
+
+.overview-tabs span {
+    color: var(--bg-overview-tabs) !important;
+}
+
+.overview-tabs span:hover {
+    color: var(--text-primary) !important;
+}
+
+.overview-tabs span.active {
+    color: var(--text-primary) !important;
+    background: var(--bg-tab-active) !important;
+}
+
+.mini-city-card {
+    background: var(--bg-mini-city) !important;
+    border: 1px solid var(--border-mini-city) !important;
+    transition: background 0.35s ease;
+}
+
+.mini-city-card p {
+    color: var(--text-muted) !important;
+}
+
+.mini-city-card h4 {
+    color: var(--text-primary) !important;
+}
+
+.mini-city-card h2 {
+    color: var(--text-primary) !important;
+}
+
+.add-city-btn {
+    background: var(--bg-add-city) !important;
+    border-color: var(--border-add-city) !important;
+    color: var(--text-muted) !important;
+}
+
+.add-city-btn:hover {
+    background: var(--bg-card) !important;
+    color: var(--text-primary) !important;
+}
+
+#loading-overlay {
+    background: var(--bg-overlay) !important;
+}
+
+/* Sunmoon panel */
+.sunmoon-panel {
+    background: var(--bg-sm-panel) !important;
+    transition: background 0.35s ease;
+}
+
+.sm-search-bar input[type="text"] {
+    background: var(--bg-input) !important;
+    border-color: var(--border-input) !important;
+    color: var(--text-primary) !important;
+}
+
+.sm-search-bar input[type="text"]::placeholder {
+    color: var(--text-placeholder) !important;
+}
+
+.sm-offset-group {
+    background: var(--sm-offset-bg) !important;
+    border-color: var(--sm-offset-border) !important;
+}
+
+.sm-offset-group label {
+    color: var(--sm-label-color) !important;
+}
+
+.sm-offset-group input[type="number"] {
+    background: var(--sm-offset-input) !important;
+    color: var(--text-primary) !important;
+}
+
+.sm-info-strip {
+    color: var(--sm-info-color) !important;
+}
+
+.sm-info-strip .sm-city-label {
+    color: var(--sm-city-label) !important;
+}
+
+.sm-row-section {
+    background: var(--bg-sm-row) !important;
+    border-color: var(--border-sm-row) !important;
+    transition: background 0.35s ease;
+}
+
+.sm-row-header {
+    color: var(--text-primary) !important;
+}
+
+.sm-row-header .sm-row-subtitle {
+    color: var(--text-muted) !important;
+}
+
+.sm-timeline-item .sm-time {
+    color: var(--sm-time-color) !important;
+}
+
+.sm-timeline-item .sm-temp {
+    color: var(--sm-temp-color) !important;
+}
+
+.sm-timeline-item .sm-desc {
+    color: var(--sm-desc-color) !important;
+}
+
+.sm-row-section.sun .sm-dot {
+    background: var(--sm-dot-bg) !important;
+}
+
+.sm-row-section.moon .sm-dot {
+    background: var(--sm-dot-bg) !important;
+}
+
+.sm-timeline-scroll::-webkit-scrollbar-thumb {
+    background: var(--sm-scrollbar-thumb) !important;
+}
+
+/* Map panel */
+.map-panel {
+    background: var(--map-panel-bg) !important;
+    transition: background 0.35s ease;
+}
+
+/* Settings panel */
+.settings-panel {
+    background: var(--bg-settings) !important;
+    transition: background 0.35s ease;
+}
+
+.settings-title {
+    color: var(--settings-title) !important;
+}
+
+.settings-section {
+    background: var(--bg-settings-card) !important;
+    border-color: var(--border-settings) !important;
+    transition: background 0.35s ease, border-color 0.35s ease;
+}
+
+.settings-account-name {
+    color: var(--settings-name) !important;
+}
+
+.settings-account-email {
+    color: var(--settings-email) !important;
+}
+
+.settings-row {
+    border-top-color: var(--settings-row-border) !important;
+}
+
+.settings-row-title {
+    color: var(--settings-row-title) !important;
+}
+
+.settings-row-desc {
+    color: var(--settings-row-desc) !important;
+}
+
+.settings-select {
+    background-color: var(--select-bg) !important;
+    border-color: var(--select-border) !important;
+    color: var(--select-color) !important;
+}
+
+.settings-select option {
+    background: var(--select-option-bg) !important;
+    color: var(--select-color) !important;
+}
+
+/* Theme toggle button */
+.theme-toggle-btn {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background: var(--bg-input);
+    border: 1px solid var(--border-card);
+    font-size: 16px;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    line-height: 1;
+    transition: background 0.35s ease, transform 0.2s, box-shadow 0.2s;
+}
+
+.theme-toggle-btn i {
+    font-size: 16px;
+    transition: color 0.3s;
+}
+
+.theme-toggle-btn:hover {
+    transform: scale(1.12) rotate(18deg);
+    box-shadow: 0 4px 16px rgba(255, 209, 102, 0.40);
+}

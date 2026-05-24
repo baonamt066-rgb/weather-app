@@ -1,0 +1,142 @@
+/* 3. Bản đồ (dashboard) */
+.map-widget {
+    grid-column: 3;
+    grid-row: 1;
+    position: relative;
+    overflow: hidden;
+    padding: 0;
+}
+
+.map-overlay-info {
+    position: absolute;
+    bottom: 20px;
+    left: 20px;
+    z-index: 1000;
+    background: rgba(0, 0, 0, 0.6);
+    padding: 10px 15px;
+    border-radius: 12px;
+    backdrop-filter: blur(5px);
+}
+
+#map {
+    width: 100%;
+    height: 100%;
+    background: transparent;
+    z-index: 1;
+}
+
+.leaflet-tooltip.custom-tooltip {
+    background: rgba(0, 0, 0, 0.8) !important;
+    border: 1px solid rgba(255, 255, 255, 0.2) !important;
+    color: white !important;
+    border-radius: 8px !important;
+    font-size: 12px;
+}
+
+.leaflet-tooltip-top.custom-tooltip::before {
+    border-color: transparent !important;
+}
+
+/* 4. Các thành phố phụ */
+.side-cities {
+    grid-column: 1;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+    overflow-y: auto;
+    padding-right: 5px;
+}
+
+.mini-city-card {
+    background: rgba(255, 255, 255, 0.10);
+    border: 1px solid rgba(255, 255, 255, 0.20);
+    border-radius: 20px;
+    padding: 15px 20px;
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    backdrop-filter: blur(10px);
+    transition: background 0.2s;
+}
+
+.mini-city-card:hover {
+    background: rgba(255, 255, 255, 0.16);
+}
+
+.mini-city-card .city-left {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+}
+
+.mini-city-card img {
+    width: 50px;
+}
+
+.mini-city-card h4 {
+    font-size: 16px;
+    margin-bottom: 4px;
+}
+
+.mini-city-card h2 {
+    font-size: 28px;
+    font-weight: 500;
+}
+
+.add-city-btn {
+    background: rgba(255, 255, 255, 0.06);
+    border: 1px dashed rgba(255, 255, 255, 0.30);
+    border-radius: 20px;
+    padding: 15px;
+    text-align: center;
+    cursor: pointer;
+    color: rgba(255, 255, 255, 0.55);
+    transition: 0.3s;
+}
+
+.add-city-btn:hover {
+    background: rgba(255, 255, 255, 0.12);
+    color: #fff;
+    border-color: #ffd166;
+}
+
+/* 5. Biểu đồ tổng quan */
+.overview-widget {
+    grid-column: 2 / span 2;
+    grid-row: 2;
+    display: flex;
+    flex-direction: column;
+}
+
+.overview-header {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    margin-bottom: 20px;
+}
+
+.overview-tabs span {
+    font-size: 12px;
+    margin-left: 15px;
+    color: rgba(255, 255, 255, 0.55);
+    cursor: pointer;
+    transition: 0.3s;
+}
+
+.overview-tabs span:hover {
+    color: #fff;
+}
+
+.overview-tabs span.active {
+    color: #ffd166;
+    background: rgba(255, 209, 102, 0.18);
+    padding: 5px 10px;
+    border-radius: 8px;
+}
+
+.chart-container {
+    flex: 1;
+    position: relative;
+    width: 100%;
+}

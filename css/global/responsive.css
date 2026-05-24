@@ -1,0 +1,355 @@
+@media (max-width: 768px) {
+
+    /* Body layout: stack dọc */
+    body {
+        flex-direction: column;
+        height: 100dvh;
+        overflow: hidden;
+    }
+
+    /* Ẩn sidebar desktop */
+    .sidebar {
+        display: none !important;
+    }
+
+    /* Content wrapper chiếm toàn bộ, trừ bottom nav */
+    .content-wrapper {
+        flex: 1;
+        overflow: hidden;
+        padding-bottom: 0;
+    }
+
+    /* === BOTTOM NAV BAR === */
+    .bottom-nav {
+        display: flex;
+        align-items: center;
+        justify-content: space-around;
+        background: var(--bg-sidebar);
+        border-top: 1px solid var(--border-sidebar);
+        padding: 8px 0 max(8px, env(safe-area-inset-bottom));
+        z-index: 200;
+        flex-shrink: 0;
+        backdrop-filter: blur(16px);
+        -webkit-backdrop-filter: blur(16px);
+    }
+
+    .bottom-nav-item {
+        display: flex;
+        flex-direction: column;
+        align-items: center;
+        gap: 4px;
+        padding: 6px 16px;
+        border-radius: 12px;
+        color: var(--icon-muted);
+        cursor: pointer;
+        transition: color 0.25s, background 0.25s;
+        font-size: 11px;
+        font-weight: 500;
+        min-width: 56px;
+    }
+
+    .bottom-nav-item i {
+        font-size: 20px;
+    }
+
+    .bottom-nav-item.active {
+        color: #ffd166;
+    }
+
+    .bottom-nav-item.active i {
+        filter: drop-shadow(0 0 6px rgba(255, 209, 102, 0.7));
+    }
+
+    /* === DASHBOARD trên mobile === */
+    .main-container {
+        padding: 16px;
+        gap: 14px;
+    }
+
+    /* Header top-bar */
+    .top-bar {
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .search-box {
+        width: 100%;
+        order: 2;
+    }
+
+    .header-actions {
+        width: 100%;
+        order: 1;
+        justify-content: space-between;
+    }
+
+    /* Dashboard grid: 1 cột */
+    .dashboard-grid {
+        display: flex;
+        flex-direction: column;
+        gap: 14px;
+    }
+
+    /* Card thời tiết hiện tại */
+    .current-weather {
+        padding: 18px;
+    }
+
+    .current-weather .temp-main h1 {
+        font-size: 48px;
+    }
+
+    /* Forecast list: ngang scroll */
+    .forecast-list {
+        padding: 16px;
+    }
+
+    .forecast-list>div#forecast-container {
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        gap: 10px !important;
+        padding-bottom: 8px !important;
+    }
+
+    .forecast-item {
+        min-width: 130px;
+        flex-direction: column;
+        align-items: center;
+        gap: 6px;
+        padding: 12px 10px;
+    }
+
+    .forecast-item .day-info {
+        width: auto;
+        flex-direction: column;
+        gap: 4px;
+        text-align: center;
+    }
+
+    .forecast-item .desc {
+        width: auto;
+        text-align: center;
+        font-size: 11px;
+    }
+
+    .forecast-item .temps {
+        width: auto;
+        text-align: center;
+    }
+
+    /* Map widget: chiều cao cố định */
+    .map-widget {
+        height: 240px;
+        min-height: 240px;
+        overflow: hidden;
+        touch-action: pan-y;
+    }
+
+    #map {
+        height: 240px !important;
+        touch-action: none;
+    }
+
+    /* Side cities: ngang scroll */
+    .side-cities {
+        display: flex !important;
+        flex-direction: row !important;
+        overflow-x: auto !important;
+        overflow-y: hidden !important;
+        padding-bottom: 6px;
+        gap: 10px;
+    }
+
+    .mini-city-card {
+        min-width: 160px;
+        flex-shrink: 0;
+    }
+
+    /* Overview chart */
+    .overview-widget {
+        min-height: 220px;
+    }
+
+    .chart-container {
+        height: 160px;
+    }
+
+    /* === MAP PANEL trên mobile === */
+    .map-top-bar {
+        top: 16px;
+        left: 16px;
+        right: 16px;
+        transform: none;
+        width: auto;
+        flex-wrap: wrap;
+        gap: 10px;
+    }
+
+    .map-top-bar input {
+        min-width: unset;
+        width: 100%;
+        flex: 1;
+    }
+
+    .map-info-box {
+        top: auto;
+        bottom: 16px;
+        left: 16px;
+        right: auto;
+        min-width: unset;
+        padding: 14px 18px;
+    }
+
+    .map-legend {
+        bottom: 16px;
+        right: 16px;
+        padding: 14px;
+    }
+
+    .map-legend h3 {
+        font-size: 13px;
+    }
+
+    .legend-item {
+        font-size: 13px;
+        gap: 8px;
+    }
+
+    /* === SUN & MOON trên mobile === */
+    .sunmoon-panel {
+        padding: 20px 16px;
+        gap: 20px;
+    }
+
+    .sm-page-title {
+        font-size: 20px;
+    }
+
+    .sm-search-bar {
+        flex-direction: column;
+        gap: 10px;
+    }
+
+    .sm-search-bar input[type="text"] {
+        min-width: unset;
+        width: 100%;
+    }
+
+    .sm-search-bar button {
+        width: 100%;
+        padding: 12px;
+    }
+
+    .sm-offset-group {
+        width: 100%;
+        justify-content: space-between;
+    }
+
+    .sm-info-strip {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 8px;
+    }
+
+    .sm-row-section {
+        padding: 16px;
+    }
+
+    /* === SETTINGS trên mobile === */
+    .settings-panel {
+        padding: 20px 16px;
+        align-items: flex-start;
+    }
+
+    .settings-inner {
+        max-width: 100%;
+        gap: 20px;
+    }
+
+    .settings-title {
+        font-size: 20px;
+    }
+
+    .settings-section {
+        padding: 20px 16px;
+    }
+
+    .settings-row {
+        flex-direction: column;
+        align-items: flex-start;
+        gap: 10px;
+    }
+
+    .settings-select {
+        width: 100%;
+    }
+
+    .settings-save-btn {
+        width: 100%;
+        text-align: center;
+    }
+
+    .settings-account-card {
+        flex-wrap: wrap;
+    }
+}
+
+/* Extra small (≤400px) */
+@media (max-width: 400px) {
+    .main-container {
+        padding: 12px;
+    }
+
+    .header-actions {
+        gap: 10px;
+    }
+
+    .current-weather .temp-main h1 {
+        font-size: 40px;
+    }
+
+    .bottom-nav-item {
+        padding: 6px 10px;
+        min-width: 44px;
+        font-size: 10px;
+    }
+
+    .bottom-nav-item span {
+        display: none;
+    }
+
+    .bottom-nav-item i {
+        font-size: 22px;
+    }
+}
+
+/* Extra small (≤400px) */
+@media (max-width: 400px) {
+    .main-container {
+        padding: 12px;
+    }
+
+    .header-actions {
+        gap: 10px;
+    }
+
+    .current-weather .temp-main h1 {
+        font-size: 40px;
+    }
+
+    .bottom-nav-item {
+        padding: 6px 10px;
+        min-width: 44px;
+        font-size: 10px;
+    }
+
+    .bottom-nav-item span {
+        display: none;
+    }
+
+    .bottom-nav-item i {
+        font-size: 22px;
+    }
+}

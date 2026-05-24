@@ -1,0 +1,145 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>WeatherNow — Đăng nhập</title>
+  <link href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap" rel="stylesheet">
+  <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+  <link rel="stylesheet" href="css/register_login_form.css">
+</head>
+<body>
+
+  <div class="sky-bg"></div>
+  <div class="sun"></div>
+
+  <div class="stars" id="stars"></div>
+
+  <div class="cloud-wrap">
+    <div class="cloud c1"></div>
+    <div class="cloud c2"></div>
+    <div class="cloud c3"></div>
+  </div>
+
+  <div class="rain" id="rain"></div>
+
+  <div class="landscape"></div>
+
+  <div class="toast" id="toast">
+    <i class='bx bx-check-circle'></i>
+    <span id="toast-msg">Thành công!</span>
+  </div>
+
+  <div class="container">
+    
+    <div class="toggle-side" id="toggle-side">
+      <div class="toggle-icon" id="toggle-icon">🌤️</div>
+      <h2 id="toggle-title">Xin chào!</h2>
+      <p id="toggle-desc">Chưa có tài khoản? Đăng ký để theo dõi thời tiết mọi lúc mọi nơi.</p>
+      <button class="toggle-btn" id="toggle-btn">Đăng ký</button>
+
+      <div class="weather-mini">
+        <div class="wstat">
+          <i class='bx bx-current-location'></i>
+          <strong>Hà Nội</strong>
+          <span>Vị trí</span>
+        </div>
+        <div class="wstat">
+          <i class='bx bx-thermometer'></i>
+          <strong>32°C</strong>
+          <span>Nhiệt độ</span>
+        </div>
+        <div class="wstat">
+          <i class='bx bxs-droplet'></i>
+          <strong>78%</strong>
+          <span>Độ ẩm</span>
+        </div>
+        <div class="wstat">
+          <i class='bx bx-wind'></i>
+          <strong>12km/h</strong>
+          <span>Gió</span>
+        </div>
+      </div>
+    </div>
+
+    <div class="form-side">
+
+      <div class="form-panel active" id="login-panel" style="padding-left:28px;">
+        <div class="form-logo">
+          <i class='bx bx-cloud-lightning'></i>
+          <span>WeatherNow</span>
+        </div>
+        <h1 class="form-title">Đăng nhập</h1>
+        <p class="form-subtitle">Xem dự báo thời tiết của bạn ngay hôm nay</p>
+
+        <form id="login-form" onsubmit="return false;">
+          <div class="input-group" style="width:88%;">
+            <input type="email" id="login-email" placeholder="Email (@gmail.com)">
+            <i class='bx bxs-envelope'></i>
+          </div>
+          <div class="input-group" style="width:88%;">
+            <input type="password" id="login-pass" placeholder="Mật khẩu">
+            <i class='bx bxs-lock-alt'></i>
+          </div>
+          <div class="forgot" style="width:88%;text-align:left;">
+            <a href="#">Quên mật khẩu?</a>
+          </div>
+          <button class="submit-btn" id="login-submit" type="button">
+            <i class='bx bx-log-in'></i> Đăng nhập
+          </button>
+        </form>
+
+        <div class="divider"><span>hoặc tiếp tục với</span></div>
+        <div class="socials">
+          <a href="#" class="google-btn" title="Đăng nhập bằng Google"><i class='bx bxl-google'></i></a>
+          <a href="#"><i class='bx bxl-facebook'></i></a>
+          <a href="#"><i class='bx bxl-github'></i></a>
+          <a href="#"><i class='bx bxl-linkedin'></i></a>
+        </div>
+      </div>
+
+      <div class="form-panel hidden" id="register-panel" style="padding-left:28px;">
+        <div class="form-logo">
+          <i class='bx bx-cloud-lightning'></i>
+          <span>WeatherNow</span>
+        </div>
+        <h1 class="form-title">Đăng ký</h1>
+        <p class="form-subtitle">Tạo tài khoản để nhận dự báo cá nhân hoá</p>
+
+        <form id="register-form" onsubmit="return false;">
+          <div class="input-group" style="width:88%;">
+            <input type="text" id="reg-name" placeholder="Họ và tên">
+            <i class='bx bxs-user'></i>
+          </div>
+          <div class="input-group" style="width:88%;">
+            <input type="email" id="reg-email" placeholder="Email (bắt buộc @gmail.com)">
+            <i class='bx bxs-envelope'></i>
+          </div>
+          <div class="input-group" style="width:88%;">
+            <input type="password" id="reg-pass" placeholder="Mật khẩu (tối thiểu 6 ký tự)">
+            <i class='bx bxs-lock-alt'></i>
+          </div>
+          <div class="input-group" style="width:88%;">
+            <input type="password" id="reg-confirm" placeholder="Xác nhận mật khẩu">
+            <i class='bx bxs-lock'></i>
+          </div>
+          <button class="submit-btn" id="reg-submit">
+            <i class='bx bx-user-plus'></i> Đăng ký
+          </button>
+        </form>
+
+        <div class="divider"><span>hoặc đăng ký với</span></div>
+        <div class="socials">
+          <a href="#" class="google-btn" title="Đăng ký bằng Google"><i class='bx bxl-google'></i></a>
+          <a href="#"><i class='bx bxl-facebook'></i></a>
+          <a href="#"><i class='bx bxl-github'></i></a>
+          <a href="#"><i class='bx bxl-linkedin'></i></a>
+        </div>
+      </div>
+
+    </div>
+  </div>
+
+  <script type="module" src="js/register_login_form.js"></script>
+</body>
+</html>

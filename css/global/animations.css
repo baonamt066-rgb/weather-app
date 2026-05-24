@@ -1,0 +1,246 @@
+@keyframes popupIn {
+    from {
+        opacity: 0;
+        transform: scale(0.92) translateY(-12px);
+    }
+
+    to {
+        opacity: 1;
+        transform: scale(1) translateY(0);
+    }
+}
+
+/* ===== SKY LAYERS & NIGHT MODE (giống weather_auth) ===== -->
+    
+/* ── Sky background layer ── */
+.sky-bg {
+    position: fixed;
+    inset: 0;
+    z-index: 0;
+    background: linear-gradient(180deg, #0d4f80 0%, #1a6fa8 35%, #5bbce4 70%, #b8e4f9 100%);
+    transition: background 1.2s ease;
+    pointer-events: none;
+}
+
+/* ── Mặt trời ── */
+.sky-sun {
+    position: fixed;
+    top: 48px;
+    right: 100px;
+    width: 68px;
+    height: 68px;
+    background: radial-gradient(circle, #ffe566 30%, #ffd166 60%, rgba(255, 209, 102, 0) 100%);
+    border-radius: 50%;
+    box-shadow: 0 0 40px 20px rgba(255, 220, 80, 0.32);
+    z-index: 1;
+    pointer-events: none;
+    animation: skyPulse 4s ease-in-out infinite;
+    transition: opacity 0.9s ease, transform 0.9s ease;
+}
+
+@keyframes skyPulse {
+
+    0%,
+    100% {
+        transform: scale(1);
+    }
+
+    50% {
+        transform: scale(1.07);
+    }
+}
+
+/* ── Mặt trăng (ẩn ban ngày) ── */
+.sky-moon {
+    position: fixed;
+    top: 44px;
+    right: 108px;
+    font-size: 52px;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transform: translateY(-60px);
+    transition: opacity 1s ease, transform 1s ease;
+    filter: drop-shadow(0 0 18px rgba(200, 230, 255, 0.55));
+    animation: moonFloat 4s ease-in-out infinite;
+}
+
+@keyframes moonFloat {
+
+    0%,
+    100% {
+        margin-top: 0;
+    }
+
+    50% {
+        margin-top: -8px;
+    }
+}
+
+/* ── Mây ── */
+.sky-clouds {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    overflow: hidden;
+}
+
+.sky-cloud {
+    position: absolute;
+    background: #fff;
+    border-radius: 50px;
+    opacity: 0.82;
+    transition: opacity 1s ease;
+}
+
+.sky-cloud::before,
+.sky-cloud::after {
+    content: '';
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+}
+
+.sc1 {
+    width: 120px;
+    height: 36px;
+    top: 70px;
+    left: -150px;
+    animation: cloudDrift1 30s linear infinite;
+}
+
+.sc1::before {
+    width: 48px;
+    height: 48px;
+    top: -22px;
+    left: 18px;
+}
+
+.sc1::after {
+    width: 36px;
+    height: 36px;
+    top: -14px;
+    left: 56px;
+}
+
+.sc2 {
+    width: 90px;
+    height: 26px;
+    top: 150px;
+    left: -120px;
+    animation: cloudDrift2 22s linear infinite;
+    opacity: 0.60;
+}
+
+.sc2::before {
+    width: 36px;
+    height: 36px;
+    top: -16px;
+    left: 12px;
+}
+
+.sc2::after {
+    width: 26px;
+    height: 26px;
+    top: -10px;
+    left: 42px;
+}
+
+.sc3 {
+    width: 150px;
+    height: 42px;
+    top: 32px;
+    left: -190px;
+    animation: cloudDrift3 38s linear infinite;
+    opacity: 0.50;
+}
+
+.sc3::before {
+    width: 58px;
+    height: 58px;
+    top: -26px;
+    left: 24px;
+}
+
+.sc3::after {
+    width: 42px;
+    height: 42px;
+    top: -16px;
+    left: 74px;
+}
+
+@keyframes cloudDrift1 {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(100vw + 180px));
+    }
+}
+
+@keyframes cloudDrift2 {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(100vw + 140px));
+    }
+}
+
+@keyframes cloudDrift3 {
+    0% {
+        transform: translateX(0);
+    }
+
+    100% {
+        transform: translateX(calc(100vw + 220px));
+    }
+}
+
+/* ── Sao ── */
+.sky-stars {
+    position: fixed;
+    inset: 0;
+    z-index: 1;
+    pointer-events: none;
+    opacity: 0;
+    transition: opacity 1.2s ease;
+}
+
+.sky-stars span {
+    position: absolute;
+    background: #fff;
+    border-radius: 50%;
+    animation: starTwinkle 2s ease-in-out infinite;
+}
+
+@keyframes starTwinkle {
+
+    0%,
+    100% {
+        opacity: 0.85;
+    }
+
+    50% {
+        opacity: 0.15;
+    }
+}
+
+/* Smooth chuyển cho tất cả thành phần */
+.sidebar,
+.glass-card,
+.forecast-item,
+.mini-city-card,
+.search-box,
+.settings-section,
+.sm-row-section,
+.sunmoon-panel,
+.settings-panel,
+.bottom-nav {
+    transition-property: background, border-color, box-shadow;
+    transition-duration: 0.8s;
+    transition-timing-function: ease;
+}

@@ -1,0 +1,108 @@
+/* 1. Thẻ Thời Tiết Hiện Tại */
+.current-weather {
+    background: linear-gradient(145deg, #4facfe 0%, #00f2fe 100%);
+    grid-column: 1;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    border: none;
+}
+
+.current-weather .top-info {
+    display: flex;
+    justify-content: space-between;
+    font-size: 14px;
+    opacity: 0.9;
+}
+
+.current-weather .temp-main {
+    text-align: center;
+    margin: 20px 0;
+}
+
+.current-weather .temp-main img {
+    width: 100px;
+}
+
+.current-weather .temp-main h1 {
+    font-size: 64px;
+    font-weight: 600;
+    margin: -10px 0 0 0;
+    text-shadow: 0 4px 10px rgba(0, 0, 0, 0.2);
+}
+
+.current-weather .bottom-stats {
+    display: flex;
+    justify-content: space-between;
+    text-align: center;
+    background: rgba(255, 255, 255, 0.2);
+    padding: 15px;
+    border-radius: 16px;
+}
+
+.stat-item p {
+    font-size: 12px;
+    opacity: 0.8;
+    margin-bottom: 5px;
+}
+
+.stat-item h4 {
+    font-size: 14px;
+}
+
+/* 2. Dự báo */
+.forecast-list {
+    grid-column: 2;
+    grid-row: 1;
+    display: flex;
+    flex-direction: column;
+    gap: 15px;
+}
+
+.forecast-list h3 {
+    font-size: 16px;
+    font-weight: 600;
+    margin-bottom: 10px;
+}
+
+.forecast-item {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    background: rgba(255, 255, 255, 0.08);
+    border: 1px solid rgba(255, 255, 255, 0.14);
+    padding: 10px 15px;
+    border-radius: 12px;
+    font-size: 14px;
+    transition: background 0.2s;
+}
+
+.forecast-item:hover {
+    background: rgba(255, 255, 255, 0.14);
+}
+
+.forecast-item .day-info {
+    display: flex;
+    align-items: center;
+    gap: 15px;
+    width: 40%;
+}
+
+.forecast-item img {
+    width: 40px;
+}
+
+.forecast-item .desc {
+    color: rgba(255, 255, 255, 0.60);
+    font-size: 12px;
+    width: 30%;
+    text-align: left;
+    text-transform: capitalize;
+}
+
+.forecast-item .temps {
+    width: 30%;
+    text-align: right;
+    font-weight: 500;
+}

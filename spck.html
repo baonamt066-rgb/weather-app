@@ -1,0 +1,403 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Studay Weather Dashboard - Nâng Cấp</title>
+
+    <link
+        href="https://fonts.googleapis.com/css2?family=Outfit:wght@300;400;500;600;700&family=Space+Grotesk:wght@400;500;600&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link href="https://unpkg.com/boxicons@2.1.4/css/boxicons.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+
+    <!-- ===== EXTERNAL CSS ===== -->
+
+    <!-- Global: Reset & Variables -->
+    <link rel="stylesheet" href="css/global/reset.css">
+    <link rel="stylesheet" href="css/global/variables.css">
+
+    <!-- Global: Layout, Components, Animations, Utilities -->
+    <link rel="stylesheet" href="css/global/layout.css">
+    <link rel="stylesheet" href="css/global/components.css">
+    <link rel="stylesheet" href="css/global/animations.css">
+    <link rel="stylesheet" href="css/global/utilities.css">
+
+    <!-- Sections -->
+    <link rel="stylesheet" href="css/sections/sidebar.css">
+    <link rel="stylesheet" href="css/sections/navbar.css">
+    <link rel="stylesheet" href="css/sections/dashboard.css">
+    <link rel="stylesheet" href="css/sections/weather.css">
+    <link rel="stylesheet" href="css/sections/map.css">
+    <link rel="stylesheet" href="css/sections/timeline.css">
+    <link rel="stylesheet" href="css/sections/settings.css">
+    <link rel="stylesheet" href="css/sections/auth.css">
+
+    <!-- Themes: Light bindings, Dark mode, Responsive (always last) -->
+    <link rel="stylesheet" href="css/themes/light.css">
+    <link rel="stylesheet" href="css/themes/dark.css">
+    <link rel="stylesheet" href="css/global/responsive.css">
+
+</head>
+
+<body>
+
+    <!-- ===== SKY BACKGROUND LAYERS (giống weather_auth) ===== -->
+    <div class="sky-bg" id="sky-bg"></div>
+    <div class="sky-sun" id="sky-sun"></div>
+    <div class="sky-moon" id="sky-moon">🌙</div>
+    <div class="sky-stars" id="sky-stars"></div>
+    <div class="sky-clouds">
+        <div class="sky-cloud sc1"></div>
+        <div class="sky-cloud sc2"></div>
+        <div class="sky-cloud sc3"></div>
+    </div>
+
+    <div id="loading-overlay"><i class="fas fa-spinner fa-spin"></i> Đang xử lý...</div>
+
+    <!-- === LOGOUT CONFIRMATION POPUP === -->
+    <div id="logout-overlay">
+        <div id="logout-popup">
+            <div class="popup-header">
+                <h3>Confirm Logout</h3>
+                <button class="popup-close" id="popup-close-btn">&times;</button>
+            </div>
+            <div class="popup-body">
+                Are you sure you want to log out?
+            </div>
+            <div class="popup-actions">
+                <button class="btn-cancel" id="popup-cancel-btn">Cancel</button>
+                <button class="btn-logout" id="popup-logout-btn">Logout</button>
+            </div>
+        </div>
+    </div>
+
+    <nav class="sidebar">
+        <div class="logo">
+            <i class="fas fa-sun"></i>
+            <span class="app-name">WeatherNow</span>
+        </div>
+        <div class="nav-icons">
+            <div class="nav-item active" id="nav-dashboard" title="Dashboard">
+                <i class="fas fa-th-large"></i>
+                <span class="nav-text" id="text-nav-dashboard">Dashboard</span>
+            </div>
+            <div class="nav-item" id="nav-map" title="Bản đồ quốc gia">
+                <i class="fas fa-map-marker-alt"></i>
+                <span class="nav-text" id="text-nav-map">Bản đồ</span>
+            </div>
+            <div class="nav-item" id="nav-sunmoon" title="Sun & Moon Timeline">
+                <i class="fas fa-sun"></i>
+                <span class="nav-text" id="text-nav-sunmoon">Timeline</span>
+            </div>
+            <div class="nav-item" id="nav-settings" title="Cài đặt" style="cursor:pointer;">
+                <i class="fas fa-cog"></i>
+                <span class="nav-text" id="text-nav-settings">Cài đặt</span>
+            </div>
+        </div>
+        <div class="logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span class="nav-text" id="text-nav-logout">Đăng xuất</span>
+        </div>
+    </nav>
+
+    <!-- === BOTTOM NAV BAR (chỉ hiện trên mobile) === -->
+    <nav class="bottom-nav" id="bottom-nav">
+        <div class="bottom-nav-item active" id="bnav-dashboard">
+            <i class="fas fa-th-large"></i>
+            <span id="btext-dashboard">Dashboard</span>
+        </div>
+        <div class="bottom-nav-item" id="bnav-map">
+            <i class="fas fa-map-marker-alt"></i>
+            <span id="btext-map">Bản đồ</span>
+        </div>
+        <div class="bottom-nav-item" id="bnav-sunmoon">
+            <i class="fas fa-sun"></i>
+            <span id="btext-sunmoon">Timeline</span>
+        </div>
+        <div class="bottom-nav-item" id="bnav-settings">
+            <i class="fas fa-cog"></i>
+            <span id="btext-settings">Cài đặt</span>
+        </div>
+        <div class="bottom-nav-item" id="bnav-logout">
+            <i class="fas fa-sign-out-alt"></i>
+            <span>Thoát</span>
+        </div>
+    </nav>
+
+    <div class="content-wrapper">
+
+        <!-- ===== DASHBOARD VIEW ===== -->
+        <div class="main-container" id="view-dashboard">
+            <header class="top-bar">
+                <div class="search-box">
+                    <i class="fas fa-search"></i>
+                    <input type="text" id="search-input" placeholder="Nhập tên thành phố (VD: Hanoi, Tokyo)...">
+                </div>
+                <div class="header-actions">
+                    <button class="location-btn" id="geo-btn" title="Vị trí hiện tại"><i
+                            class="fas fa-location-arrow"></i></button>
+                    <button class="theme-toggle-btn" id="themeToggle" title="Chuyển chế độ sáng/tối"><i
+                            class="fas fa-sun"></i></button>
+                    <div class="notification"><i class="far fa-bell"></i></div>
+                    <div class="user-profile">
+                        <span style="font-size: 14px;" id="header-greeting">Hi, Bảo Nam</span>
+                        <img id="header-avatar"
+                            src="https://ui-avatars.com/api/?name=Bao+Nam&background=1a6fa8&color=fff" alt="User">
+                    </div>
+                </div>
+            </header>
+
+            <div class="dashboard-grid">
+                <div class="glass-card current-weather">
+                    <div class="top-info">
+                        <div>
+                            <div style="display: flex; align-items: center; gap: 8px;">
+                                <i class="fas fa-map-marker-alt" style="font-size: 18px;"></i>
+                                <h3 id="city-name" style="font-size: 20px; font-weight: 600;">Hà Nội</h3>
+                            </div>
+                            <p id="date-time" style="font-size: 12px; margin-top: 4px;">Đang tải...</p>
+                        </div>
+                        <i class="fas fa-ellipsis-h" style="cursor:pointer"></i>
+                    </div>
+
+                    <div class="temp-main">
+                        <img id="main-icon" src="https://openweathermap.org/img/wn/02d@4x.png" alt="Weather Icon">
+                        <h1 id="current-temp">--°</h1>
+                        <p id="weather-desc" style="text-transform: capitalize; margin-top: 5px;">--</p>
+                    </div>
+
+                    <div class="bottom-stats">
+                        <div class="stat-item">
+                            <i class="fas fa-wind" style="margin-bottom:5px"></i>
+                            <h4 id="wind">-- km/h</h4>
+                            <p>Gió</p>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-tint" style="margin-bottom:5px"></i>
+                            <h4 id="humidity">--%</h4>
+                            <p>Độ ẩm</p>
+                        </div>
+                        <div class="stat-item">
+                            <i class="fas fa-eye" style="margin-bottom:5px"></i>
+                            <h4 id="feels-like">--°</h4>
+                            <p>Cảm giác</p>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="glass-card forecast-list">
+                    <h3><i class="fas fa-cloud-sun" style="margin-right: 8px;"></i>Dự báo 5 Ngày Tới</h3>
+                    <div id="forecast-container"
+                        style="overflow-y: auto; height: 100%; display:flex; flex-direction:column; gap:10px; padding-right:5px;">
+                    </div>
+                </div>
+
+                <div class="glass-card map-widget">
+                    <div id="map"></div>
+                    <div class="map-overlay-info">
+                        <h2 id="map-country-name" style="font-size: 18px; margin: 0;">Việt Nam</h2>
+                        <p id="map-base-temp" style="font-size: 12px; color: #ccc; margin: 0;">Nhiệt độ nền: --°C</p>
+                    </div>
+                </div>
+
+                <div class="side-cities" id="side-cities-list"></div>
+
+                <div class="glass-card overview-widget">
+                    <div class="overview-header">
+                        <h3>Tổng quan (24h tới)</h3>
+                        <div class="overview-tabs">
+                            <span id="tab-temp" class="active">Nhiệt độ</span>
+                            <span id="tab-humid">Độ ẩm</span>
+                        </div>
+                    </div>
+                    <div class="chart-container">
+                        <canvas id="overviewChart"></canvas>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- ===== MAP PANEL VIEW ===== -->
+        <div class="map-panel" id="view-map">
+            <!-- Leaflet map fills the whole panel -->
+            <div id="country-map"></div>
+
+            <!-- Search bar -->
+            <div class="glass-panel map-top-bar">
+                <input type="text" id="country-input" placeholder="Nhập tên quốc gia (VD: Vietnam, Japan)"
+                    autocomplete="off" />
+                <button id="map-search-btn">Tìm kiếm</button>
+            </div>
+
+            <!-- Info box -->
+            <div class="glass-panel map-info-box">
+                <h2 id="country-name-display">---</h2>
+                <p id="base-temp-display">Nhiệt độ nền: --°C</p>
+            </div>
+
+            <!-- Legend -->
+            <div class="glass-panel map-legend">
+                <h3>Temperature Map</h3>
+                <div class="legend-item">
+                    <div class="color-box" style="background: #FFB3B3;"></div> Nóng (&gt;32°C)
+                </div>
+                <div class="legend-item">
+                    <div class="color-box" style="background: #FFF3A3;"></div> Ấm (27–32°C)
+                </div>
+                <div class="legend-item">
+                    <div class="color-box" style="background: #B7F0C1;"></div> Mát (20–27°C)
+                </div>
+                <div class="legend-item">
+                    <div class="color-box" style="background: #A7D8FF;"></div> Lạnh (&lt;20°C)
+                </div>
+            </div>
+
+            <!-- Loading -->
+            <div id="map-loading">Đang tải dữ liệu khí hậu...</div>
+        </div>
+
+        <!-- ===== SUN & MOON TIMELINE VIEW ===== -->
+        <div class="sunmoon-panel" id="view-sunmoon">
+
+            <div class="sm-page-title" id="sm-page-title">
+                <i class="fas fa-sun"></i>
+                <span id="sm-page-title-text">Sun & Moon — Hourly Forecast</span>
+            </div>
+
+            <div class="sm-search-bar">
+                <input type="text" id="sm-city-input" placeholder="Enter city name (e.g. Tokyo, London)..." />
+                <div class="sm-offset-group">
+                    <label id="sm-day-offset-label">Day offset</label>
+                    <input type="number" id="sm-day-offset" min="0" max="7" value="0" />
+                </div>
+                <button id="sm-search-btn"><i class="fas fa-search" style="margin-right:6px;"></i><span id="sm-search-text">Search</span></button>
+            </div>
+
+            <div class="sm-info-strip" id="sm-info-strip" style="display:none;">
+                <span class="sm-city-label" id="sm-city-label"></span>
+                <span class="sm-date-badge" id="sm-date-badge"></span>
+                <span id="sm-sunrise-info" style="color:#FFB74D;"></span>
+                <span id="sm-sunset-info" style="color:#788CFF;"></span>
+            </div>
+
+            <div class="sm-loading" id="sm-loading">
+                <i class="fas fa-spinner fa-spin"></i> Loading forecast data...
+            </div>
+
+            <!-- Sun Row — always visible; smShowPlaceholderTimelines() fills it before any API fetch -->
+            <div class="sm-row-section sun" id="sm-sun-section">
+                <div class="sm-row-header">
+                    <span class="sm-row-icon">☀️</span>
+                    <span>Daytime</span>
+                    <span class="sm-row-subtitle">06:00 – 18:00</span>
+                </div>
+                <div class="sm-timeline-scroll">
+                    <div class="sm-timeline" id="sm-sun-timeline"></div>
+                </div>
+            </div>
+
+            <!-- Moon Row — always visible; smShowPlaceholderTimelines() fills it before any API fetch -->
+            <div class="sm-row-section moon" id="sm-moon-section">
+                <div class="sm-row-header">
+                    <span class="sm-row-icon">🌙</span>
+                    <span>Nighttime</span>
+                    <span class="sm-row-subtitle">18:00 – 06:00</span>
+                </div>
+                <div class="sm-timeline-scroll">
+                    <div class="sm-timeline" id="sm-moon-timeline"></div>
+                </div>
+            </div>
+
+        </div>
+
+
+        <!-- ===== SETTINGS PANEL ===== -->
+        <div class="settings-panel" id="view-settings">
+            <div class="settings-inner">
+
+                <h2 class="settings-title">
+                    <i class="fas fa-cog"></i> Cài đặt
+                </h2>
+
+                <!-- Thông tin tài khoản -->
+                <div class="settings-section">
+                    <div class="settings-section-label">Thông tin tài khoản</div>
+                    <div class="settings-account-card">
+                        <div class="settings-avatar" id="settings-avatar">BN</div>
+                        <div>
+                            <div class="settings-account-name" id="settings-fullname">Trần Bảo Nam</div>
+                            <div class="settings-account-email" id="settings-email">baonam1066@gmail.com</div>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- Tuỳ chỉnh ứng dụng -->
+                <div class="settings-section">
+                    <div class="settings-section-label">Tuỳ chỉnh ứng dụng</div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-title">Đơn vị nhiệt độ</div>
+                            <div class="settings-row-desc">Chuyển đổi giữa °C, °F và °K</div>
+                        </div>
+                        <select class="settings-select" id="setting-unit">
+                            <option value="C">Độ C (°C)</option>
+                            <option value="F">Độ F (°F)</option>
+                            <option value="K">Độ K (°K)</option>
+                        </select>
+                    </div>
+
+                    <div class="settings-row">
+                        <div>
+                            <div class="settings-row-title">Ngôn ngữ</div>
+                            <div class="settings-row-desc">Thay đổi ngôn ngữ hiển thị</div>
+                        </div>
+                        <select class="settings-select" id="setting-lang">
+                            <option value="vi">Tiếng Việt</option>
+                            <option value="en">English</option>
+                        </select>
+                    </div>
+
+                </div>
+
+                <button class="settings-save-btn" id="settings-save-btn">
+                    <i class="fas fa-save" style="margin-right:8px;"></i>Lưu cài đặt
+                </button>
+
+            </div>
+        </div>
+
+    </div>
+
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <script src="https://unpkg.com/@turf/turf@6/turf.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+
+    <!-- ===== EXTERNAL JS ===== -->
+
+    <!-- Data -->
+    <script src="js/data/constants.js"></script>
+
+    <!-- Core -->
+    <script src="js/core/ui.js"></script>
+    <script src="js/core/router.js"></script>
+    <script src="js/sections/map.js"></script>
+    <script src="js/sections/weather.js"></script>
+    <script src="js/core/api.js"></script>
+    <script src="js/sections/dashboard.js"></script>
+    <script src="js/sections/timeline.js"></script>
+    <script src="js/sections/settings.js"></script>
+    <script src="js/sections/auth.js"></script>
+    <script src="js/core/theme.js"></script>
+    <script src="js/core/animations.js"></script>
+    <script src="js/core/navbar.js"></script>
+    <script src="js/core/sidebar.js"></script>
+    <script src="js/core/main.js"></script>
+
+
+</body>
+
+</html>

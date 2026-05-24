@@ -1,0 +1,7 @@
+.sm-loading.show {
+    display: flex;
+}
+
+#logout-overlay.show {
+    display: flex;
+}
