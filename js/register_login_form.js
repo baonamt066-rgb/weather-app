@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-import { GoogleAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+import { GoogleAuthProvider, GithubAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
 // ==========================================
 // 1. CẤU HÌNH & KHỞI TẠO FIREBASE
@@ -16,7 +16,8 @@ const firebaseConfig = {
 const app = initializeApp(firebaseConfig);
 const auth = getAuth(app);
 auth.languageCode = 'vi';
-const provider = new GoogleAuthProvider();
+const googleProvider = new GoogleAuthProvider();
+const githubProvider = new GithubAuthProvider();
 
 // ==========================================
 // 2. KHỞI TẠO HIỆU ỨNG ĐỒ HOẠ (STARS & RAIN)
@@ -265,7 +266,7 @@ const googleButtons = document.getElementsByClassName("google-btn");
 for (let btn of googleButtons) {
   btn.addEventListener("click", (e) => {
     e.preventDefault();
-    signInWithPopup(auth, provider)
+    signInWithPopup(auth, googleProvider)
       .then((result) => {
         const user = result.user;
 
@@ -298,6 +299,58 @@ for (let btn of googleButtons) {
           showToast('Domain chưa được thêm vào Firebase!', 'error');
         } else if (errorCode === 'auth/network-request-failed') {
           showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
+        } else {
+          showToast(errorMessage, 'error');
+        }
+
+        triggerRain();
+      });
+  });
+}
+
+// ==========================================
+// 9. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GITHUB (FIREBASE)
+// ==========================================
+const githubButtons = document.querySelectorAll(".socials a:nth-child(3)");
+
+for (let btn of githubButtons) {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    signInWithPopup(auth, githubProvider)
+      .then((result) => {
+        const user = result.user;
+
+        const userData = {
+          fullname: user.displayName || user.email?.split('@')[0],
+          email: user.email,
+          photoURL: user.photoURL,
+          uid: user.uid
+        };
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+
+        showToast(`Chào mừng ${userData.fullname}! 🚀`, 'success');
+        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+      })
+      .catch((error) => {
+        console.log("GitHub Error:", error);
+
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        console.error("Error Code:", errorCode);
+        console.error("Error Message:", errorMessage);
+
+        if (errorCode === 'auth/popup-closed-by-user') {
+          showToast('Đăng nhập bị huỷ!', 'info');
+        } else if (errorCode === 'auth/popup-blocked') {
+          showToast('Chrome đang chặn popup!', 'error');
+        } else if (errorCode === 'auth/unauthorized-domain') {
+          showToast('Domain chưa được thêm vào Firebase!', 'error');
+        } else if (errorCode === 'auth/network-request-failed') {
+          showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
+        } else if (errorCode === 'auth/account-exists-with-different-credential') {
+          showToast('Email này đã được liên kết với tài khoản khác!', 'error');
         } else {
           showToast(errorMessage, 'error');
         }
