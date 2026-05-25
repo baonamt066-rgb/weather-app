@@ -1,6 +1,13 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-import { GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
-
+import { 
+  GoogleAuthProvider, 
+  GithubAuthProvider, 
+  FacebookAuthProvider, 
+  getAuth, 
+  signInWithPopup,
+  signInWithRedirect,
+  getRedirectResult 
+} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 // ==========================================
 // 1. CẤU HÌNH & KHỞI TẠO FIREBASE
 // ==========================================
@@ -137,38 +144,67 @@ function clearFieldError(input) {
   input.style.borderColor = '';
 }
 
-function validateRegName() {
+function validateRegName(showErrors = false) {
   const el = document.getElementById('reg-name');
-  if (!el.value.trim()) { showFieldError(el, 'Vui lòng nhập họ và tên'); return false; }
+  const v = el.value.trim();
+  if (!v) {
+    if (showErrors) showFieldError(el, 'Vui lòng nhập họ và tên');
+    else clearFieldError(el);
+    return false;
+  }
+  // Không chấp nhận khi người dùng nhập địa chỉ email vào ô họ và tên
+  if (emailRx.test(v)) {
+    if (showErrors) showFieldError(el, 'Họ và tên không được là địa chỉ email');
+    else clearFieldError(el);
+    return false;
+  }
   clearFieldError(el); return true;
 }
 
-function validateRegEmail() {
+function validateRegEmail(showErrors = false) {
   const el = document.getElementById('reg-email');
   const v = el.value.trim();
+  if (!v) {
+    if (showErrors) showFieldError(el, 'Vui lòng nhập email');
+    else clearFieldError(el);
+    return false;
+  }
   if (!emailRx.test(v)) { showFieldError(el, 'Email không hợp lệ'); return false; }
   if (!v.toLowerCase().endsWith('@gmail.com')) { showFieldError(el, 'Email phải là @gmail.com'); return false; }
   clearFieldError(el); return true;
 }
 
-function validateRegPass() {
+function validateRegPass(showErrors = false) {
   const el = document.getElementById('reg-pass');
-  if (el.value.length < 6) { showFieldError(el, 'Mật khẩu phải ít nhất 6 ký tự'); return false; }
+  const v = el.value;
+  if (!v) {
+    if (showErrors) showFieldError(el, 'Vui lòng nhập mật khẩu');
+    else clearFieldError(el);
+    return false;
+  }
+  if (v.length < 6) { showFieldError(el, 'Mật khẩu phải ít nhất 6 ký tự'); return false; }
   clearFieldError(el); return true;
 }
 
-function validateRegConfirm() {
+function validateRegConfirm(showErrors = false) {
   const el = document.getElementById('reg-confirm');
   const pass = document.getElementById('reg-pass').value;
-  if (el.value !== pass) { showFieldError(el, 'Mật khẩu xác nhận không khớp'); return false; }
+  const v = el.value;
+  if (!v) {
+    if (showErrors) showFieldError(el, 'Vui lòng xác nhận mật khẩu');
+    else clearFieldError(el);
+    return false;
+  }
+  if (v !== pass) { showFieldError(el, 'Mật khẩu xác nhận không khớp'); return false; }
   clearFieldError(el); return true;
 }
 
-function validateRegisterForm() {
-  const ok = validateRegName() && validateRegEmail() && validateRegPass() && validateRegConfirm();
-  const btn = document.getElementById('reg-submit');
-  if (btn) btn.disabled = !ok;
-  return ok;
+function validateRegisterForm(showErrors = false) {
+  const r1 = validateRegName(showErrors);
+  const r2 = validateRegEmail(showErrors);
+  const r3 = validateRegPass(showErrors);
+  const r4 = validateRegConfirm(showErrors);
+  return r1 && r2 && r3 && r4;
 }
 
 // login validators
@@ -189,38 +225,30 @@ function validateLoginPass() {
 
 function validateLoginForm() {
   const ok = validateLoginEmail() && validateLoginPass();
-  const btn = document.getElementById('login-submit');
-  if (btn) btn.disabled = !ok;
   return ok;
 }
 
-// wire events
-['input','blur'].forEach(ev => {
-  document.getElementById('reg-name').addEventListener(ev, validateRegisterForm);
-  document.getElementById('reg-email').addEventListener(ev, validateRegisterForm);
-  document.getElementById('reg-pass').addEventListener(ev, () => { validateRegisterForm(); validateRegConfirm(); });
-  document.getElementById('reg-confirm').addEventListener(ev, validateRegisterForm);
+// wire events — chỉ xoá lỗi khi người dùng đang gõ, không hiện lỗi mới
+['input'].forEach(ev => {
+  document.getElementById('reg-name').addEventListener(ev, () => validateRegisterForm(false));
+  document.getElementById('reg-email').addEventListener(ev, () => validateRegisterForm(false));
+  document.getElementById('reg-pass').addEventListener(ev, () => { validateRegName(false); validateRegEmail(false); validateRegPass(false); validateRegConfirm(false); });
+  document.getElementById('reg-confirm').addEventListener(ev, () => validateRegConfirm(false));
 
-  document.getElementById('login-email').addEventListener(ev, validateLoginForm);
-  document.getElementById('login-pass').addEventListener(ev, validateLoginForm);
+  document.getElementById('login-email').addEventListener(ev, () => { validateLoginEmail(); });
+  document.getElementById('login-pass').addEventListener(ev, () => { validateLoginPass(); });
 });
 
 // ==========================================
 // 6. XỬ LÝ LOGIC ĐĂNG KÝ THƯỜNG
 // ==========================================
 document.getElementById('reg-submit').addEventListener('click', () => {
+  // Run full validation and show errors for any invalid/missing fields
+  if (!validateRegisterForm(true)) { triggerRain(); return; }
+
   const name = document.getElementById('reg-name').value.trim();
   const email = document.getElementById('reg-email').value.trim();
   const pass = document.getElementById('reg-pass').value;
-  const confirm = document.getElementById('reg-confirm').value;
-
-  if (!name) { showToast('Vui lòng nhập họ và tên!', 'error'); triggerRain(); return; }
-
-  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
-  if (!emailRx.test(email)) { showToast('Email không hợp lệ!', 'error'); triggerRain(); return; }
-  if (!email.toLowerCase().endsWith('@gmail.com')) { showToast('Email phải là @gmail.com!', 'error'); triggerRain(); return; }
-  if (pass.length < 6) { showToast('Mật khẩu phải ít nhất 6 ký tự!', 'error'); triggerRain(); return; }
-  if (pass !== confirm) { showToast('Mật khẩu xác nhận không khớp!', 'error'); triggerRain(); return; }
 
   let users = getUsers();
   if (users.find(u => u.fullname.toLowerCase() === name.toLowerCase())) { showToast('Tên này đã tồn tại!', 'error'); triggerRain(); return; }
@@ -262,51 +290,75 @@ document.getElementById('login-submit').addEventListener('click', () => {
 // ==========================================
 // 8. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GOOGLE (FIREBASE)
 // ==========================================
+getRedirectResult(auth)
+  .then((result) => {
+    if (result) {
+      const user = result.user;
+      handleLoginSuccess(user);
+    }
+  })
+  .catch((error) => {
+    console.error("Redirect Error:", error);
+    showToast("Lỗi đăng nhập từ trình duyệt di động!", "error");
+  });
+
+// Hàm dùng chung xử lý lưu thông tin khi đăng nhập thành công
+function handleLoginSuccess(user) {
+  const userData = {
+    fullname: user.displayName,
+    email: user.email,
+    photoURL: user.photoURL,
+    uid: user.uid
+  };
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('currentUser', JSON.stringify(userData));
+
+  showToast(`Chào mừng ${user.displayName}! ☀️`, 'success');
+  setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+}
+
 const googleButtons = document.getElementsByClassName("google-btn");
 
 for (let btn of googleButtons) {
   btn.addEventListener("click", (e) => {
     e.preventDefault();
-    signInWithPopup(auth, googleProvider)
-      .then((result) => {
-        const user = result.user;
+    
+    // Kiểm tra xem thiết bị có phải là điện thoại/máy tính bảng không
+    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
 
-        const userData = {
-          fullname: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          uid: user.uid
-        };
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-
-        showToast(`Chào mừng ${user.displayName}! ☀️`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
-      })
-      .catch((error) => {
-        console.log("FULL ERROR:", error);
-
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        console.error("Error Code:", errorCode);
-        console.error("Error Message:", errorMessage);
-
-        if (errorCode === 'auth/popup-closed-by-user') {
-          showToast('Đăng nhập bị huỷ!', 'info');
-        } else if (errorCode === 'auth/popup-blocked') {
-          showToast('Chrome đang chặn popup!', 'error');
-        } else if (errorCode === 'auth/unauthorized-domain') {
-          showToast('Domain chưa được thêm vào Firebase!', 'error');
-        } else if (errorCode === 'auth/network-request-failed') {
-          showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
-        } else {
-          showToast(errorMessage, 'error');
-        }
-
-        triggerRain();
-      });
+    if (isMobile) {
+      // Nếu là điện thoại, chuyển hướng trang luôn để tránh lỗi chặn popup / lỗi webview
+      signInWithRedirect(auth, googleProvider);
+    } else {
+      // Nếu là máy tính PC/Laptop, mở popup như cũ cực mượt
+      signInWithPopup(auth, googleProvider)
+        .then((result) => {
+          handleLoginSuccess(result.user);
+        })
+        .catch((error) => {
+          handleAuthError(error);
+        });
+    }
   });
+}
+
+function handleAuthError(error) {
+  console.log("FULL ERROR:", error);
+  const errorCode = error.code;
+  const errorMessage = error.message;
+
+  if (errorCode === 'auth/popup-closed-by-user') {
+    showToast('Đăng nhập bị huỷ!', 'info');
+  } else if (errorCode === 'auth/popup-blocked') {
+    showToast('Chrome đang chặn popup!', 'error');
+  } else if (errorCode === 'auth/unauthorized-domain') {
+    showToast('Domain chưa được thêm vào Firebase!', 'error');
+  } else if (errorCode === 'auth/network-request-failed') {
+    showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
+  } else {
+    showToast(errorMessage, 'error');
+  }
+  triggerRain();
 }
 
 // ==========================================

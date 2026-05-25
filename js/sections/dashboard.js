@@ -151,7 +151,7 @@ async function submitNewCity() {
     const newCity = input.value.trim();
     
     if (!newCity) {
-        showModalAlert("Vui lòng nhập tên thành phố!", 'warning');
+        input.focus();
         return;
     }
     
