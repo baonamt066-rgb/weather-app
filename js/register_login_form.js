@@ -1,5 +1,5 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-import { GoogleAuthProvider, GithubAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+import { GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
 
 // ==========================================
 // 1. CẤU HÌNH & KHỞI TẠO FIREBASE
@@ -18,6 +18,8 @@ const auth = getAuth(app);
 auth.languageCode = 'vi';
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
+const facebookProvider = new FacebookAuthProvider();
+facebookProvider.addScope('email');
 
 // ==========================================
 // 2. KHỞI TẠO HIỆU ỨNG ĐỒ HOẠ (STARS & RAIN)
@@ -309,7 +311,52 @@ for (let btn of googleButtons) {
 }
 
 // ==========================================
-// 9. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GITHUB (FIREBASE)
+// 9. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG FACEBOOK (FIREBASE)
+// ==========================================
+const facebookButtons = document.getElementsByClassName("facebook-btn");
+
+for (let btn of facebookButtons) {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    signInWithPopup(auth, facebookProvider)
+      .then((result) => {
+        const user = result.user;
+
+        const userData = {
+          fullname: user.displayName || user.email?.split('@')[0],
+          email: user.email,
+          photoURL: user.photoURL,
+          uid: user.uid
+        };
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+
+        showToast(`Chào mừng ${userData.fullname}! 👍`, 'success');
+        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+      })
+      .catch((error) => {
+        console.log("Facebook Error:", error);
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        if (errorCode === 'auth/popup-closed-by-user') {
+          showToast('Đăng nhập bị huỷ!', 'info');
+        } else if (errorCode === 'auth/popup-blocked') {
+          showToast('Chrome đang chặn popup!', 'error');
+        } else if (errorCode === 'auth/unauthorized-domain') {
+          showToast('Domain chưa được thêm vào Firebase!', 'error');
+        } else if (errorCode === 'auth/account-exists-with-different-credential') {
+          showToast('Email này đã được liên kết với tài khoản khác!', 'error');
+        } else {
+          showToast(errorMessage, 'error');
+        }
+        triggerRain();
+      });
+  });
+}
+
+// ==========================================
+// 10. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GITHUB (FIREBASE)
 // ==========================================
 const githubButtons = document.querySelectorAll(".socials a:nth-child(3)");
 

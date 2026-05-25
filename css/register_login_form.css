@@ -456,7 +456,7 @@ h1.form-title {
   .toggle-icon { font-size: 48px; }
   .form-side { padding: 24px 20px; min-height: auto; }
   .weather-mini { display: none; }
-  .submit-btn { width: 100%; }
+  .submit-btn { width: 88%; }
   .input-group input { padding: 12px 40px 12px 14px; font-size: 14px; }
   h1.form-title { font-size: 24px; }
   .form-subtitle { font-size: 13px; }
