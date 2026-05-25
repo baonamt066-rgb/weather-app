@@ -94,11 +94,15 @@ async function renderSavedCities() {
                     ? `<span style="font-size: 34px; margin-right: 15px; display: inline-block;">☀️</span>`
                     : `<img src="https://openweathermap.org/img/wn/${iconCode}@2x.png" alt="icon" style="width: 50px;">`;
                 
+                // Chuẩn hóa tên thành phố để chèn vào onclick HTML an toàn hơn
+                const safeCityName = data.name.replace(/'/g, "\\'");
+                
                 // Dựng chuỗi HTML cấu trúc của một thẻ Thành phố thu nhỏ (Mini City Card)
-                // - Sự kiện onclick="getWeather('${data.name}')" giúp người dùng click vào thẻ này là Dashboard lớn tự cập nhật thời tiết nơi đó.
-                // - formatTempRound() được gọi để làm tròn nhiệt độ và tự động đổi sang đơn vị đo (°C/°F/°K) hệ thống đang chọn.
+                // - click vào thẻ sẽ xem chi tiết
+                // - click vào nút xóa sẽ xoá khỏi danh sách quan tâm
                 const html = `
-                    <div class="mini-city-card" onclick="getWeather('${data.name}')" style="cursor:pointer" title="Nhấn để xem chi tiết">
+                    <div class="mini-city-card" onclick="getWeather('${safeCityName}')" style="cursor:pointer" title="Nhấn để xem chi tiết">
+                        <button class="mini-city-delete" onclick="removeSavedCity(event, '${safeCityName}')" title="Xóa thành phố"><i class="fas fa-trash-alt"></i></button>
                         <div class="city-left">
                             ${iconHtml}
                             <div>
@@ -199,6 +203,26 @@ async function submitNewCity() {
         // Khối LUÔN LUÔN CHẠY: Ẩn màn hình phủ chờ (Loading Overlay) đi để giải phóng giao diện cho người dùng
         loadingOverlay.style.display = 'none';
     }
+}
+
+function removeSavedCity(event, cityName) {
+    event.stopPropagation();
+
+    const index = savedCities.findIndex(c => c.toLowerCase() === cityName.toLowerCase());
+    if (index === -1) {
+        console.warn('Không tìm thấy thành phố để xóa:', cityName);
+        return;
+    }
+
+    savedCities.splice(index, 1);
+    try {
+        localStorage.setItem(getSavedCitiesKey(), JSON.stringify(savedCities));
+    } catch (e) {
+        console.error('Failed to persist savedCities after removal', e);
+    }
+
+    renderSavedCities();
+    showModalAlert(`✅ Đã xóa ${cityName} khỏi danh sách!`, 'success');
 }
 
 // ============================================================================

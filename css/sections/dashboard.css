@@ -49,6 +49,7 @@
 }
 
 .mini-city-card {
+    position: relative;
     background: rgba(255, 255, 255, 0.10);
     border: 1px solid rgba(255, 255, 255, 0.20);
     border-radius: 20px;
@@ -62,6 +63,28 @@
 
 .mini-city-card:hover {
     background: rgba(255, 255, 255, 0.16);
+}
+
+.mini-city-delete {
+    position: absolute;
+    top: 12px;
+    right: 12px;
+    width: 34px;
+    height: 34px;
+    border: none;
+    border-radius: 50%;
+    background: rgba(255, 255, 255, 0.12);
+    color: #ff7675;
+    cursor: pointer;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    transition: background 0.2s, transform 0.2s;
+}
+
+.mini-city-delete:hover {
+    background: rgba(255, 255, 255, 0.24);
+    transform: scale(1.05);
 }
 
 .mini-city-card .city-left {
