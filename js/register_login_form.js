@@ -1,13 +1,6 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-import { 
-  GoogleAuthProvider, 
-  GithubAuthProvider, 
-  FacebookAuthProvider, 
-  getAuth, 
-  signInWithPopup,
-  signInWithRedirect,
-  getRedirectResult 
-} from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+import { GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
 // ==========================================
 // 1. CẤU HÌNH & KHỞI TẠO FIREBASE
 // ==========================================
@@ -290,75 +283,51 @@ document.getElementById('login-submit').addEventListener('click', () => {
 // ==========================================
 // 8. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GOOGLE (FIREBASE)
 // ==========================================
-getRedirectResult(auth)
-  .then((result) => {
-    if (result) {
-      const user = result.user;
-      handleLoginSuccess(user);
-    }
-  })
-  .catch((error) => {
-    console.error("Redirect Error:", error);
-    showToast("Lỗi đăng nhập từ trình duyệt di động!", "error");
-  });
-
-// Hàm dùng chung xử lý lưu thông tin khi đăng nhập thành công
-function handleLoginSuccess(user) {
-  const userData = {
-    fullname: user.displayName,
-    email: user.email,
-    photoURL: user.photoURL,
-    uid: user.uid
-  };
-  localStorage.setItem('isLoggedIn', 'true');
-  localStorage.setItem('currentUser', JSON.stringify(userData));
-
-  showToast(`Chào mừng ${user.displayName}! ☀️`, 'success');
-  setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
-}
-
 const googleButtons = document.getElementsByClassName("google-btn");
 
 for (let btn of googleButtons) {
   btn.addEventListener("click", (e) => {
     e.preventDefault();
-    
-    // Kiểm tra xem thiết bị có phải là điện thoại/máy tính bảng không
-    const isMobile = /Android|webOS|iPhone|iPad|iPod|BlackBerry|IEMobile|Opera Mini/i.test(navigator.userAgent);
+    signInWithPopup(auth, googleProvider)
+      .then((result) => {
+        const user = result.user;
 
-    if (isMobile) {
-      // Nếu là điện thoại, chuyển hướng trang luôn để tránh lỗi chặn popup / lỗi webview
-      signInWithRedirect(auth, googleProvider);
-    } else {
-      // Nếu là máy tính PC/Laptop, mở popup như cũ cực mượt
-      signInWithPopup(auth, googleProvider)
-        .then((result) => {
-          handleLoginSuccess(result.user);
-        })
-        .catch((error) => {
-          handleAuthError(error);
-        });
-    }
+        const userData = {
+          fullname: user.displayName,
+          email: user.email,
+          photoURL: user.photoURL,
+          uid: user.uid
+        };
+        localStorage.setItem('isLoggedIn', 'true');
+        localStorage.setItem('currentUser', JSON.stringify(userData));
+
+        showToast(`Chào mừng ${user.displayName}! ☀️`, 'success');
+        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+      })
+      .catch((error) => {
+        console.log("FULL ERROR:", error);
+
+        const errorCode = error.code;
+        const errorMessage = error.message;
+
+        console.error("Error Code:", errorCode);
+        console.error("Error Message:", errorMessage);
+
+        if (errorCode === 'auth/popup-closed-by-user') {
+          showToast('Đăng nhập bị huỷ!', 'info');
+        } else if (errorCode === 'auth/popup-blocked') {
+          showToast('Chrome đang chặn popup!', 'error');
+        } else if (errorCode === 'auth/unauthorized-domain') {
+          showToast('Domain chưa được thêm vào Firebase!', 'error');
+        } else if (errorCode === 'auth/network-request-failed') {
+          showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
+        } else {
+          showToast(errorMessage, 'error');
+        }
+
+        triggerRain();
+      });
   });
-}
-
-function handleAuthError(error) {
-  console.log("FULL ERROR:", error);
-  const errorCode = error.code;
-  const errorMessage = error.message;
-
-  if (errorCode === 'auth/popup-closed-by-user') {
-    showToast('Đăng nhập bị huỷ!', 'info');
-  } else if (errorCode === 'auth/popup-blocked') {
-    showToast('Chrome đang chặn popup!', 'error');
-  } else if (errorCode === 'auth/unauthorized-domain') {
-    showToast('Domain chưa được thêm vào Firebase!', 'error');
-  } else if (errorCode === 'auth/network-request-failed') {
-    showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
-  } else {
-    showToast(errorMessage, 'error');
-  }
-  triggerRain();
 }
 
 // ==========================================
