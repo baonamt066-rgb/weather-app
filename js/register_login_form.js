@@ -19,7 +19,6 @@ auth.languageCode = 'vi';
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
-facebookProvider.addScope('email');
 
 // ==========================================
 // 2. KHỞI TẠO HIỆU ỨNG ĐỒ HOẠ (STARS & RAIN)
