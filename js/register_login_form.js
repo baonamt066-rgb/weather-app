@@ -1,5 +1,21 @@
 import { initializeApp } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-app.js";
-import { GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getAuth, signInWithPopup } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+import { GoogleAuthProvider, GithubAuthProvider, FacebookAuthProvider, getAuth, signInWithPopup, signInWithRedirect, getRedirectResult } from "https://www.gstatic.com/firebasejs/11.9.1/firebase-auth.js";
+
+// ==========================================
+// DETECT WEBVIEW (Zalo, Facebook app, v.v.)
+// ==========================================
+function isWebView() {
+  const ua = navigator.userAgent || '';
+  return /FBAN|FBAV|Instagram|Zalo|Line|Twitter|MicroMessenger|WebView|(iPhone|iPod|iPad)(?!.*Safari)/.test(ua)
+    || (!!window.Android)
+    || (!window.chrome && /CriOS/.test(ua));
+}
+
+// Helper chuyển trang an toàn
+function navigateToApp() {
+  const base = window.location.href.replace(/\/[^/]*$/, '/');
+  window.location.href = base + 'spck.html';
+}
 
 // ==========================================
 // 1. CẤU HÌNH & KHỞI TẠO FIREBASE
@@ -19,6 +35,28 @@ auth.languageCode = 'vi';
 const googleProvider = new GoogleAuthProvider();
 const githubProvider = new GithubAuthProvider();
 const facebookProvider = new FacebookAuthProvider();
+
+// ==========================================
+// XỬ LÝ KẾT QUẢ REDIRECT (sau khi quay lại từ trang Google)
+// ==========================================
+getRedirectResult(auth).then((result) => {
+  if (!result) return; // không phải sau redirect, bỏ qua
+  const user = result.user;
+  const userData = {
+    fullname: user.displayName || user.email?.split('@')[0],
+    email: user.email,
+    photoURL: user.photoURL,
+    uid: user.uid
+  };
+  localStorage.setItem('isLoggedIn', 'true');
+  localStorage.setItem('currentUser', JSON.stringify(userData));
+  showToast(`Chào mừng ${userData.fullname}! ☀️`, 'success');
+  setTimeout(() => navigateToApp(), 1800);
+}).catch((error) => {
+  if (error.code && error.code !== 'auth/popup-closed-by-user') {
+    console.error('Redirect error:', error);
+  }
+});
 
 // ==========================================
 // 2. KHỞI TẠO HIỆU ỨNG ĐỒ HOẠ (STARS & RAIN)
@@ -145,7 +183,6 @@ function validateRegName(showErrors = false) {
     else clearFieldError(el);
     return false;
   }
-  // Không chấp nhận khi người dùng nhập địa chỉ email vào ô họ và tên
   if (emailRx.test(v)) {
     if (showErrors) showFieldError(el, 'Họ và tên không được là địa chỉ email');
     else clearFieldError(el);
@@ -217,8 +254,7 @@ function validateLoginPass() {
 }
 
 function validateLoginForm() {
-  const ok = validateLoginEmail() && validateLoginPass();
-  return ok;
+  return validateLoginEmail() && validateLoginPass();
 }
 
 // wire events — chỉ xoá lỗi khi người dùng đang gõ, không hiện lỗi mới
@@ -236,7 +272,6 @@ function validateLoginForm() {
 // 6. XỬ LÝ LOGIC ĐĂNG KÝ THƯỜNG
 // ==========================================
 document.getElementById('reg-submit').addEventListener('click', () => {
-  // Run full validation and show errors for any invalid/missing fields
   if (!validateRegisterForm(true)) { triggerRain(); return; }
 
   const name = document.getElementById('reg-name').value.trim();
@@ -264,7 +299,6 @@ document.getElementById('login-submit').addEventListener('click', () => {
   if (!email) { showToast('Vui lòng nhập email!', 'error'); triggerRain(); return; }
   if (!pass) { showToast('Vui lòng nhập mật khẩu!', 'error'); triggerRain(); return; }
 
-  const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRx.test(email)) { showToast('Email không hợp lệ!', 'error'); triggerRain(); return; }
   if (!email.toLowerCase().endsWith('@gmail.com')) { showToast('Email phải là @gmail.com!', 'error'); triggerRain(); return; }
 
@@ -277,71 +311,20 @@ document.getElementById('login-submit').addEventListener('click', () => {
   localStorage.setItem('isLoggedIn', 'true');
   localStorage.setItem('currentUser', JSON.stringify(user));
   showToast(`Chào mừng ${user.fullname}! ☀️`, 'success');
-  setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+  setTimeout(() => navigateToApp(), 1800);
 });
 
 // ==========================================
-// 8. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GOOGLE (FIREBASE)
+// HELPER: signIn với popup hoặc redirect tuỳ môi trường
 // ==========================================
-const googleButtons = document.getElementsByClassName("google-btn");
-
-for (let btn of googleButtons) {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    signInWithPopup(auth, googleProvider)
+function signInSmart(provider) {
+  if (isWebView()) {
+    // WebView không hỗ trợ popup → dùng redirect
+    signInWithRedirect(auth, provider);
+  } else {
+    signInWithPopup(auth, provider)
       .then((result) => {
         const user = result.user;
-
-        const userData = {
-          fullname: user.displayName,
-          email: user.email,
-          photoURL: user.photoURL,
-          uid: user.uid
-        };
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-
-        showToast(`Chào mừng ${user.displayName}! ☀️`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
-      })
-      .catch((error) => {
-        console.log("FULL ERROR:", error);
-
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        console.error("Error Code:", errorCode);
-        console.error("Error Message:", errorMessage);
-
-        if (errorCode === 'auth/popup-closed-by-user') {
-          showToast('Đăng nhập bị huỷ!', 'info');
-        } else if (errorCode === 'auth/popup-blocked') {
-          showToast('Chrome đang chặn popup!', 'error');
-        } else if (errorCode === 'auth/unauthorized-domain') {
-          showToast('Domain chưa được thêm vào Firebase!', 'error');
-        } else if (errorCode === 'auth/network-request-failed') {
-          showToast('Lỗi mạng hoặc bị chặn kết nối!', 'error');
-        } else {
-          showToast(errorMessage, 'error');
-        }
-
-        triggerRain();
-      });
-  });
-}
-
-// ==========================================
-// 9. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG FACEBOOK (FIREBASE)
-// ==========================================
-const facebookButtons = document.getElementsByClassName("facebook-btn");
-
-for (let btn of facebookButtons) {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    signInWithPopup(auth, facebookProvider)
-      .then((result) => {
-        const user = result.user;
-
         const userData = {
           fullname: user.displayName || user.email?.split('@')[0],
           email: user.email,
@@ -350,68 +333,17 @@ for (let btn of facebookButtons) {
         };
         localStorage.setItem('isLoggedIn', 'true');
         localStorage.setItem('currentUser', JSON.stringify(userData));
-
-        showToast(`Chào mừng ${userData.fullname}! 👍`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+        showToast(`Chào mừng ${userData.fullname}! ☀️`, 'success');
+        setTimeout(() => navigateToApp(), 1800);
       })
       .catch((error) => {
-        console.log("Facebook Error:", error);
         const errorCode = error.code;
-        const errorMessage = error.message;
-
         if (errorCode === 'auth/popup-closed-by-user') {
           showToast('Đăng nhập bị huỷ!', 'info');
         } else if (errorCode === 'auth/popup-blocked') {
-          showToast('Chrome đang chặn popup!', 'error');
-        } else if (errorCode === 'auth/unauthorized-domain') {
-          showToast('Domain chưa được thêm vào Firebase!', 'error');
-        } else if (errorCode === 'auth/account-exists-with-different-credential') {
-          showToast('Email này đã được liên kết với tài khoản khác!', 'error');
-        } else {
-          showToast(errorMessage, 'error');
-        }
-        triggerRain();
-      });
-  });
-}
-
-// ==========================================
-// 10. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GITHUB (FIREBASE)
-// ==========================================
-const githubButtons = document.querySelectorAll(".socials a:nth-child(3)");
-
-for (let btn of githubButtons) {
-  btn.addEventListener("click", (e) => {
-    e.preventDefault();
-    signInWithPopup(auth, githubProvider)
-      .then((result) => {
-        const user = result.user;
-
-        const userData = {
-          fullname: user.displayName || user.email?.split('@')[0],
-          email: user.email,
-          photoURL: user.photoURL,
-          uid: user.uid
-        };
-        localStorage.setItem('isLoggedIn', 'true');
-        localStorage.setItem('currentUser', JSON.stringify(userData));
-
-        showToast(`Chào mừng ${userData.fullname}! 🚀`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
-      })
-      .catch((error) => {
-        console.log("GitHub Error:", error);
-
-        const errorCode = error.code;
-        const errorMessage = error.message;
-
-        console.error("Error Code:", errorCode);
-        console.error("Error Message:", errorMessage);
-
-        if (errorCode === 'auth/popup-closed-by-user') {
-          showToast('Đăng nhập bị huỷ!', 'info');
-        } else if (errorCode === 'auth/popup-blocked') {
-          showToast('Chrome đang chặn popup!', 'error');
+          // Popup bị chặn → tự fallback sang redirect
+          showToast('Popup bị chặn, đang chuyển hướng...', 'info');
+          setTimeout(() => signInWithRedirect(auth, provider), 800);
         } else if (errorCode === 'auth/unauthorized-domain') {
           showToast('Domain chưa được thêm vào Firebase!', 'error');
         } else if (errorCode === 'auth/network-request-failed') {
@@ -419,10 +351,41 @@ for (let btn of githubButtons) {
         } else if (errorCode === 'auth/account-exists-with-different-credential') {
           showToast('Email này đã được liên kết với tài khoản khác!', 'error');
         } else {
-          showToast(errorMessage, 'error');
+          showToast(error.message, 'error');
         }
-
         triggerRain();
       });
+  }
+}
+
+// ==========================================
+// 8. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GOOGLE
+// ==========================================
+for (let btn of document.getElementsByClassName("google-btn")) {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    signInSmart(googleProvider);
+  });
+}
+
+// ==========================================
+// 9. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG FACEBOOK
+// ==========================================
+for (let btn of document.getElementsByClassName("facebook-btn")) {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    // Facebook app không cho phép signInWithPopup từ web khi chưa review
+    // Hiển thị thông báo rõ ràng thay vì lỗi mờ
+    showToast('Tính năng Facebook tạm thời chưa khả dụng!', 'info');
+  });
+}
+
+// ==========================================
+// 10. ĐĂNG NHẬP / ĐĂNG KÝ BẰNG GITHUB
+// ==========================================
+for (let btn of document.querySelectorAll(".socials a:nth-child(3)")) {
+  btn.addEventListener("click", (e) => {
+    e.preventDefault();
+    signInSmart(githubProvider);
   });
 }
