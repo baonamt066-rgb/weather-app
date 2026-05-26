@@ -145,7 +145,6 @@ function validateRegName(showErrors = false) {
     else clearFieldError(el);
     return false;
   }
-  // Không chấp nhận khi người dùng nhập địa chỉ email vào ô họ và tên
   if (emailRx.test(v)) {
     if (showErrors) showFieldError(el, 'Họ và tên không được là địa chỉ email');
     else clearFieldError(el);
@@ -163,7 +162,7 @@ function validateRegEmail(showErrors = false) {
     return false;
   }
   if (!emailRx.test(v)) { showFieldError(el, 'Email không hợp lệ'); return false; }
-  if (!v.toLowerCase().endsWith('@gmail.com')) { showFieldError(el, 'Email phải là @gmail.com'); return false; }
+  // ĐÃ XOÁ BỎ CHECK ĐUÔI @GMAIL.COM Ở ĐÂY THEO Ý CHÚ
   clearFieldError(el); return true;
 }
 
@@ -206,7 +205,7 @@ function validateLoginEmail() {
   const v = el.value.trim();
   if (!v) { showFieldError(el, 'Vui lòng nhập email'); return false; }
   if (!emailRx.test(v)) { showFieldError(el, 'Email không hợp lệ'); return false; }
-  if (!v.toLowerCase().endsWith('@gmail.com')) { showFieldError(el, 'Email phải là @gmail.com'); return false; }
+  // ĐÃ XOÁ BỎ CHECK ĐUÔI @GMAIL.COM Ở ĐÂY THEO Ý CHÚ
   clearFieldError(el); return true;
 }
 
@@ -236,7 +235,6 @@ function validateLoginForm() {
 // 6. XỬ LÝ LOGIC ĐĂNG KÝ THƯỜNG
 // ==========================================
 document.getElementById('reg-submit').addEventListener('click', () => {
-  // Run full validation and show errors for any invalid/missing fields
   if (!validateRegisterForm(true)) { triggerRain(); return; }
 
   const name = document.getElementById('reg-name').value.trim();
@@ -266,7 +264,7 @@ document.getElementById('login-submit').addEventListener('click', () => {
 
   const emailRx = /^[^\s@]+@[^\s@]+\.[^\s@]+$/;
   if (!emailRx.test(email)) { showToast('Email không hợp lệ!', 'error'); triggerRain(); return; }
-  if (!email.toLowerCase().endsWith('@gmail.com')) { showToast('Email phải là @gmail.com!', 'error'); triggerRain(); return; }
+  // ĐÃ XOÁ BỎ CHECK ĐUÔI @GMAIL.COM Ở ĐÂY THEO Ý CHÚ
 
   const users = getUsers();
   if (users.length === 0) { showToast('Chưa có tài khoản! Hãy đăng ký.', 'info'); switchToRegister(); return; }
@@ -309,9 +307,6 @@ for (let btn of googleButtons) {
 
         const errorCode = error.code;
         const errorMessage = error.message;
-
-        console.error("Error Code:", errorCode);
-        console.error("Error Message:", errorMessage);
 
         if (errorCode === 'auth/popup-closed-by-user') {
           showToast('Đăng nhập bị huỷ!', 'info');
@@ -405,9 +400,6 @@ for (let btn of githubButtons) {
         const errorCode = error.code;
         const errorMessage = error.message;
 
-        console.error("Error Code:", errorCode);
-        console.error("Error Message:", errorMessage);
-
         if (errorCode === 'auth/popup-closed-by-user') {
           showToast('Đăng nhập bị huỷ!', 'info');
         } else if (errorCode === 'auth/popup-blocked') {
@@ -426,4 +418,3 @@ for (let btn of githubButtons) {
       });
   });
 }
-
