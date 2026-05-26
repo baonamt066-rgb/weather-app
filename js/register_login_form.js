@@ -98,6 +98,10 @@ function showToast(msg, type = 'info') {
   setTimeout(() => t.classList.remove('show'), 3000);
 }
 
+function redirectToSpck() {
+  window.location.replace('./spck.html');
+}
+
 function triggerRain() {
   document.querySelectorAll('.drop').forEach(d => d.style.opacity = '1');
   setTimeout(() => document.querySelectorAll('.drop').forEach(d => d.style.opacity = '0'), 2500);
@@ -275,7 +279,7 @@ document.getElementById('login-submit').addEventListener('click', () => {
   localStorage.setItem('isLoggedIn', 'true');
   localStorage.setItem('currentUser', JSON.stringify(user));
   showToast(`Chào mừng ${user.fullname}! ☀️`, 'success');
-  setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+  setTimeout(redirectToSpck, 1200);
 });
 
 // ==========================================
@@ -284,8 +288,14 @@ document.getElementById('login-submit').addEventListener('click', () => {
 const googleButtons = document.getElementsByClassName("google-btn");
 
 for (let btn of googleButtons) {
+  btn.href = 'javascript:void(0)';
   btn.addEventListener("click", (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    if (!auth || typeof signInWithPopup !== 'function') {
+      showToast('Google auth chưa sẵn sàng hoặc không khả dụng', 'error');
+      return;
+    }
     signInWithPopup(auth, googleProvider)
       .then((result) => {
         const user = result.user;
@@ -300,7 +310,7 @@ for (let btn of googleButtons) {
         localStorage.setItem('currentUser', JSON.stringify(userData));
 
         showToast(`Chào mừng ${user.displayName}! ☀️`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+        setTimeout(redirectToSpck, 1200);
       })
       .catch((error) => {
         console.log("FULL ERROR:", error);
@@ -331,8 +341,14 @@ for (let btn of googleButtons) {
 const facebookButtons = document.getElementsByClassName("facebook-btn");
 
 for (let btn of facebookButtons) {
+  btn.href = 'javascript:void(0)';
   btn.addEventListener("click", (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    if (!auth || typeof signInWithPopup !== 'function') {
+      showToast('Facebook auth chưa sẵn sàng hoặc không khả dụng', 'error');
+      return;
+    }
     signInWithPopup(auth, facebookProvider)
       .then((result) => {
         const user = result.user;
@@ -347,7 +363,7 @@ for (let btn of facebookButtons) {
         localStorage.setItem('currentUser', JSON.stringify(userData));
 
         showToast(`Chào mừng ${userData.fullname}! 👍`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+        setTimeout(redirectToSpck, 1200);
       })
       .catch((error) => {
         console.log("Facebook Error:", error);
@@ -376,8 +392,14 @@ for (let btn of facebookButtons) {
 const githubButtons = document.querySelectorAll(".socials a:nth-child(3)");
 
 for (let btn of githubButtons) {
+  btn.href = 'javascript:void(0)';
   btn.addEventListener("click", (e) => {
     e.preventDefault();
+    e.stopPropagation();
+    if (!auth || typeof signInWithPopup !== 'function') {
+      showToast('GitHub auth chưa sẵn sàng hoặc không khả dụng', 'error');
+      return;
+    }
     signInWithPopup(auth, githubProvider)
       .then((result) => {
         const user = result.user;
@@ -392,7 +414,7 @@ for (let btn of githubButtons) {
         localStorage.setItem('currentUser', JSON.stringify(userData));
 
         showToast(`Chào mừng ${userData.fullname}! 🚀`, 'success');
-        setTimeout(() => { window.location.href = 'spck.html'; }, 1800);
+        setTimeout(redirectToSpck, 1200);
       })
       .catch((error) => {
         console.log("GitHub Error:", error);
